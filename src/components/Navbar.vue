@@ -3,9 +3,11 @@ import { ref } from "vue";
 import { useColorMode } from "@vueuse/core";
 import {
   NavigationMenu,
+  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
@@ -28,6 +30,12 @@ interface RouteProps {
   label: string;
 }
 
+interface CategoryProps {
+  to: string;
+  name: string;
+  description: string;
+}
+
 const routeList: RouteProps[] = [
   {
     to: "/",
@@ -48,6 +56,23 @@ const routeList: RouteProps[] = [
   {
     to: "/About",
     label: "オークションについて",
+  },
+];
+const categoryList: CategoryProps[] = [
+  {
+    to: "/Category1",
+    name: "category1",
+    description: "category 1",
+  },
+  {
+    to: "/Category2",
+    name: "category2",
+    description: "category 2",
+  },
+  {
+    to: "/Category3",
+    name: "category3",
+    description: "category 3",
   },
 ];
 
@@ -93,7 +118,25 @@ const mode = useColorMode();
               </SheetTitle>
             </SheetHeader>
 
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
+              <Button as-child variant="ghost" class="justify-start text-base">
+                <router-link @click="isOpen = false" to="a">
+                  すべてのカテゴリ
+                </router-link>
+              </Button>
+              <div class="flex flex-col gap-1 pl-5 justify-start">
+                <Button
+                  v-for="{ to, name } in categoryList"
+                  :key="name"
+                  as-child
+                  variant="ghost"
+                  class="justify-start text-base"
+                >
+                  <router-link @click="isOpen = false" :to="to">
+                    {{ name }}
+                  </router-link>
+                </Button>
+              </div>
               <Button
                 v-for="{ to, label } in routeList"
                 :key="label"
@@ -120,6 +163,36 @@ const mode = useColorMode();
     <!-- Desktop -->
     <NavigationMenu class="hidden lg:block">
       <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger class="bg-card text-base">
+            すべてのカテゴリ
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div class="grid w-[600px] grid-cols-2 gap-5 p-4">
+              <ul class="flex flex-col gap-2">
+                <li
+                  v-for="{ to, name, description } in categoryList"
+                  :key="name"
+                  class="rounded-md p-3 text-sm hover:bg-muted"
+                >
+                  <router-link :to="to">
+                    <p class="mb-1 font-semibold leading-none text-foreground">
+                      {{ name }}
+                    </p>
+                    <p class="line-clamp-2 text-muted-foreground">
+                      {{ description }}
+                    </p>
+                  </router-link>
+                </li>
+              </ul>
+              <img
+                src="https://www.radix-vue.com/logo.svg"
+                alt="Beach"
+                class="h-full w-full rounded-md object-cover"
+              />
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Button
