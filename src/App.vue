@@ -4,14 +4,7 @@ import Footer from "./components/Footer.vue";
 </script>
 
 <template>
-  <Navbar></Navbar>
-  <div class="spacer"></div>
+  <Navbar style="position: sticky"></Navbar>
   <router-view />
   <Footer></Footer>
 </template>
-
-<style scoped>
-.spacer {
-  margin: 50px 0;
-}
-</style>

@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { AuctionItem } from "@/types/auction-item";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 
 defineProps<{
   item: AuctionItem;
