@@ -14,7 +14,10 @@ defineProps<{
     class="bg-muted/60 dark:bg-card flex flex-col h-full overflow-hidden group/hoverimg"
     style="padding: 10px"
   >
-    <CardHeader class="p-0 gap-0">
+    <CardHeader class="p-0 pb-2 gap-0">
+      <CardTitle class="py-2 px-1">
+        <router-link :to="`/auction/${item.id}`">{{ item.name }}</router-link>
+      </CardTitle>
       <div class="h-full overflow-hidden">
         <img
           :src="item.thumbnailImageUrl"
@@ -22,11 +25,11 @@ defineProps<{
           class="w-full aspect-square object-cover transition-all duration-200 ease-linear size-full group-hover/hoverimg:scale-[1.01]"
         />
       </div>
-      <CardTitle class="py-2 px-6">{{ item.name }} </CardTitle>
     </CardHeader>
 
-    <CardContent class="pb-0 text-muted-foreground">
-      \{{ numberWithComma(item.currentBid) }}
+    <CardContent class="pb-0 text-muted-foreground text-center">
+      <span class="current-bid"> \{{ numberWithComma(item.currentBid) }} </span>
+      <span class="current-bid-username">{{ item.currentBidUserName }}</span>
     </CardContent>
 
     <CardContent class="py-2 flex justify-center">
@@ -34,3 +37,16 @@ defineProps<{
     </CardContent>
   </Card>
 </template>
+
+<style scoped>
+.current-bid {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: block;
+}
+
+.current-bid-username {
+  color: var(--muted-foreground);
+  display: block;
+}
+</style>
