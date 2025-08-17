@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import ItemComponent from "@/views/home/components/itemComponent.vue"; // @ is an alias to /src
+import ItemComponent from "@/views/home/components/ItemComponent.vue";
 
 const items = ref([
   { id: 1, name: "Item 1" },

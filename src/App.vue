@@ -5,6 +5,13 @@ import Footer from "./components/Footer.vue";
 
 <template>
   <Navbar></Navbar>
+  <div class="spacer"></div>
   <router-view />
   <Footer></Footer>
 </template>
+
+<style scoped>
+.spacer {
+  margin: 50px 0;
+}
+</style>
