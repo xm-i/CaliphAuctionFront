@@ -18,6 +18,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User One",
     endTime: new Date(Date.now() + 3600 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User Two",
     endTime: new Date(Date.now() + 7200 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 3,
@@ -44,6 +46,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User Three",
     endTime: new Date(Date.now() + 10800 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 1,
@@ -57,6 +60,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User One",
     endTime: new Date(Date.now() + 3600 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 2,
@@ -70,6 +74,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User Two",
     endTime: new Date(Date.now() + 7200 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 3,
@@ -83,6 +88,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User Three",
     endTime: new Date(Date.now() + 10800 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 1,
@@ -96,6 +102,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User One",
     endTime: new Date(Date.now() + 3600 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 2,
@@ -109,6 +116,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User Two",
     endTime: new Date(Date.now() + 7200 * 1000),
     status: "active",
+    bidHistory: [],
   },
   {
     id: 3,
@@ -122,6 +130,7 @@ const items = ref<AuctionItem[]>([
     currentBidUserName: "User Three",
     endTime: new Date(Date.now() + 10800 * 1000),
     status: "active",
+    bidHistory: [],
   },
 ]);
 </script>

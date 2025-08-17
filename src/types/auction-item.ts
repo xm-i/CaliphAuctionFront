@@ -10,4 +10,13 @@ export interface AuctionItem {
   currentBid: number;
   endTime: Date;
   status: "active" | "ended" | "preparing";
+  bidHistory: BidHistoryItem[];
+}
+
+export interface BidHistoryItem {
+  id: number;
+  userId: string;
+  userName: string;
+  bidAmount: number;
+  bidTime: Date;
 }

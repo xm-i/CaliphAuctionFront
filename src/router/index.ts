@@ -16,6 +16,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
+  {
+    path: "/auction/:id",
+    name: "auction-detail",
+    component: () =>
+      import(
+        /* webpackChunkName: "auction-detail" */ "../views/auction/AuctionDetailView.vue"
+      ),
+    props: true,
+  },
 ];
 
 const router = createRouter({
