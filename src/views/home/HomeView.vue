@@ -88,7 +88,7 @@ const items = ref<AuctionItem[]>([
     id: 1,
     name: "Item 1",
     description: "Description 1",
-    currentBid: 100,
+    currentBid: 1100,
     thumbnailImageUrl: thumbnailSample,
     imageUrl: imageSample,
     startingBid: 100,
@@ -101,7 +101,7 @@ const items = ref<AuctionItem[]>([
     id: 2,
     name: "Item 2",
     description: "Description 2",
-    currentBid: 200,
+    currentBid: 2200,
     thumbnailImageUrl: thumbnailSample,
     imageUrl: imageSample,
     startingBid: 200,
@@ -114,7 +114,7 @@ const items = ref<AuctionItem[]>([
     id: 3,
     name: "Item 3",
     description: "Description 3",
-    currentBid: 300,
+    currentBid: 3300,
     thumbnailImageUrl: thumbnailSample,
     imageUrl: imageSample,
     startingBid: 300,
@@ -128,9 +128,9 @@ const items = ref<AuctionItem[]>([
 
 <template>
   <div class="home">
-    <section class="container lg:w-[75%] py-24 sm:py-32">
+    <section class="container lg:w-[90%]">
       <div
-        class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8"
+        class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
       >
         <AuctionItemCard v-for="item in items" :key="item.id" :item="item" />
       </div>
