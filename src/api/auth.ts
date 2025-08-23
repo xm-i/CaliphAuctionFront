@@ -12,3 +12,18 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
 export function logout() {
   localStorage.removeItem("auth_token");
 }
+
+// Registration
+export type RegisterPayload = {
+  email: string;
+  password: string;
+  username: string;
+};
+export type RegisterResponse = { accessToken: string };
+
+export async function register(
+  payload: RegisterPayload
+): Promise<RegisterResponse> {
+  const { data } = await api.post<RegisterResponse>("/users/register", payload);
+  return data;
+}
