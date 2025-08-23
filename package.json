@@ -34,6 +34,7 @@
     "embla-carousel": "^8.3.0",
     "embla-carousel-vue": "^8.3.0",
     "lucide-vue-next": "^0.452.0",
+    "pinia": "^2.3.1",
     "reka-ui": "^2.4.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
