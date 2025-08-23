@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useColorMode } from "@vueuse/core";
 import {
   NavigationMenu,
@@ -24,10 +24,13 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronsDown, Menu } from "lucide-vue-next";
 import GithubIcon from "@/icons/GithubIcon.vue";
 import ToggleTheme from "./ToggleTheme.vue";
+import { useAuth } from "@/composables/useAuth";
 
+type NavAuth = "public" | "auth" | "guest";
 interface RouteProps {
   to: string;
   label: string;
+  auth?: NavAuth; // default 'public'
 }
 
 interface CategoryProps {
@@ -40,26 +43,32 @@ const routeList: RouteProps[] = [
   {
     to: "/",
     label: "ホーム",
+    auth: "public",
   },
   {
     to: "/signin",
     label: "ログイン",
+    auth: "guest",
   },
   {
     to: "/signup",
     label: "会員登録",
+    auth: "guest",
   },
   {
     to: "/mypage",
     label: "マイページ",
+    auth: "auth",
   },
   {
     to: "/watch",
     label: "ウォッチ",
+    auth: "auth",
   },
   {
     to: "/about",
     label: "オークションについて",
+    auth: "public",
   },
 ];
 const categoryList: CategoryProps[] = [
@@ -83,6 +92,18 @@ const categoryList: CategoryProps[] = [
 const isOpen = ref<boolean>(false);
 
 const mode = useColorMode();
+
+const { isAuthenticated, user } = useAuth();
+
+const visibleRouteList = computed(() => {
+  return routeList.filter((item) => {
+    const a = item.auth ?? "public";
+    if (a === "public") return true;
+    if (a === "auth") return !!isAuthenticated.value;
+    if (a === "guest") return !isAuthenticated.value;
+    return true;
+  });
+});
 </script>
 
 <template>
@@ -142,7 +163,7 @@ const mode = useColorMode();
                 </Button>
               </div>
               <Button
-                v-for="{ to, label } in routeList"
+                v-for="{ to, label } in visibleRouteList"
                 :key="label"
                 as-child
                 variant="ghost"
@@ -200,15 +221,13 @@ const mode = useColorMode();
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Button
-              v-for="{ to, label } in routeList"
+              v-for="{ to, label } in visibleRouteList"
               :key="label"
               as-child
               variant="ghost"
               class="justify-start text-base"
             >
-              <router-link :to="to">
-                {{ label }}
-              </router-link>
+              <router-link :to="to">{{ label }}</router-link>
             </Button>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -216,6 +235,14 @@ const mode = useColorMode();
     </NavigationMenu>
 
     <div class="hidden lg:flex">
+      <div class="flex items-center gap-2">
+        <template v-if="isAuthenticated">
+          <span class="text-sm text-muted-foreground">
+            {{ user?.username }}
+          </span>
+          <Separator orientation="vertical" class="h-5" />
+        </template>
+      </div>
       <ToggleTheme />
 
       <Button as-child size="sm" variant="ghost" aria-label="View on GitHub">

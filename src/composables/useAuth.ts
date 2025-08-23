@@ -4,8 +4,8 @@ import type { LoginPayload } from "@/api/auth";
 
 export function useAuth() {
   const store = useAuthStore();
-  const { isAuthenticated, loading, error } = storeToRefs(store);
+  const { isAuthenticated, loading, error, user } = storeToRefs(store);
   const login = (payload: LoginPayload) => store.login(payload);
   const logout = () => store.logout();
-  return { isAuthenticated, loading, error, login, logout };
+  return { isAuthenticated, loading, error, user, login, logout };
 }
