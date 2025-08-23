@@ -42,19 +42,23 @@ const routeList: RouteProps[] = [
     label: "ホーム",
   },
   {
-    to: "/User",
+    to: "/signin",
+    label: "ログイン",
+  },
+  {
+    to: "/signup",
     label: "会員登録",
   },
   {
-    to: "/MyPage",
+    to: "/mypage",
     label: "マイページ",
   },
   {
-    to: "/Watch",
+    to: "/watch",
     label: "ウォッチ",
   },
   {
-    to: "/About",
+    to: "/about",
     label: "オークションについて",
   },
 ];

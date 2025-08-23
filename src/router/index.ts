@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/home/HomeView.vue";
+import { useAuth } from "@/composables/useAuth";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -8,11 +9,14 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
   },
   {
+    path: "/signin",
+    name: "signin",
+    component: () =>
+      import(/* webpackChunkName: "signin" */ "../views/signin/SignInView.vue"),
+  },
+  {
     path: "/about",
     name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
@@ -30,6 +34,13 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory("/"),
   routes,
+});
+
+router.beforeEach((to) => {
+  const { isAuthenticated } = useAuth();
+  if (to.meta?.requiresAuth && !isAuthenticated.value) {
+    return { name: "signin", query: { redirect: to.fullPath } };
+  }
 });
 
 export default router;
