@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { AuctionItem } from "@/types/auction-item";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/lib/utils";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
-
-import thumbnailSample from "@/assets/thumbnail-sample.png";
-import imageSample from "@/assets/image-sample.png";
+import { getAuctionItem, type AuctionDetailDto } from "@/api/auction";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
 
-const item = ref<AuctionItem | null>(null);
+const item = ref<AuctionDetailDto | null>(null);
 
 // カウントダウン
 const remainingTime = ref("");
@@ -37,36 +34,9 @@ function updateCountdown(endTime: Date) {
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
-onMounted(() => {
-  item.value = {
-    id: 1,
-    name: "Item 1",
-    description: "Description 1",
-    currentBid: 100,
-    thumbnailImageUrl: thumbnailSample,
-    imageUrl: imageSample,
-    startingBid: 100,
-    currentBidUserId: "user1",
-    currentBidUserName: "User One",
-    endTime: new Date(Date.now() + 3600 * 1000),
-    status: "active",
-    bidHistory: [
-      {
-        id: 1,
-        userId: "user1",
-        userName: "User One",
-        bidAmount: 100,
-        bidTime: new Date(),
-      },
-      {
-        id: 2,
-        userId: "user2",
-        userName: "User Two",
-        bidAmount: 150,
-        bidTime: new Date(),
-      },
-    ],
-  };
+onMounted(async () => {
+  const data = await getAuctionItem(itemId);
+  item.value = data;
   if (item.value) {
     timer = window.setInterval(
       () => updateCountdown(item.value!.endTime),
@@ -102,10 +72,10 @@ onUnmounted(() => {
 
         <div class="text-center space-y-2">
           <p class="text-2xl font-bold">
-            ¥{{ numberWithComma(item.currentBid) }}
+            ¥{{ numberWithComma(item.currentPrice) }}
           </p>
           <p class="text-muted-foreground">
-            {{ item.currentBidUserName }}
+            {{ item.currentHighestBidUserName }}
           </p>
         </div>
         <p class="text-muted-foreground whitespace-pre-line leading-relaxed">
@@ -120,7 +90,7 @@ onUnmounted(() => {
         <h2 class="text-xl font-semibold mb-4">入札履歴</h2>
         <Separator class="mb-4" />
         <ul class="space-y-2">
-          <li v-for="bid in item.bidHistory" :key="bid.id">
+          <li v-for="bid in item.bidHistories" :key="bid.id">
             <div class="flex justify-between">
               <span>{{ bid.userName }}</span>
               <span>¥{{ numberWithComma(bid.bidAmount) }}</span>
