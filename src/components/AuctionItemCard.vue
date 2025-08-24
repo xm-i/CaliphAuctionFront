@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { AuctionItem } from "@/types/auction-item";
+import type { SearchItemDto } from "@/api/auction";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { numberWithComma } from "@/lib/utils";
 
 defineProps<{
-  item: AuctionItem;
+  item: SearchItemDto;
 }>();
 </script>
 
@@ -28,8 +28,12 @@ defineProps<{
     </CardHeader>
 
     <CardContent class="pb-0 text-muted-foreground text-center">
-      <span class="current-bid"> \{{ numberWithComma(item.currentBid) }} </span>
-      <span class="current-bid-username">{{ item.currentBidUserName }}</span>
+      <span class="current-bid">
+        \{{ numberWithComma(item.currentPrice) }}
+      </span>
+      <span v-if="item.currentUserName" class="current-bid-username">{{
+        item.currentUserName
+      }}</span>
     </CardContent>
 
     <CardContent class="py-2 flex justify-center">
