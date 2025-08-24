@@ -3,51 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/lib/utils";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { getAuctionItem, type AuctionDetailDto } from "@/api/auction";
+import CountdownTimer from "@/components/CountdownTimer.vue";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
 
 const item = ref<AuctionDetailDto | null>(null);
 
-// カウントダウン
-const remainingTime = ref("");
-let timer: number | undefined;
-
-function updateCountdown(endTime: Date) {
-  const diff = new Date(endTime).getTime() - Date.now();
-
-  if (diff <= 0) {
-    remainingTime.value = "終了";
-    clearInterval(timer);
-    return;
-  }
-
-  const hours = Math.floor(diff / 1000 / 60 / 60);
-  const minutes = Math.floor((diff / 1000 / 60) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  remainingTime.value = `${hours.toString().padStart(2, "0")}:${minutes
-    .toString()
-    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-}
-
 onMounted(async () => {
   const data = await getAuctionItem(itemId);
   item.value = data;
-  if (item.value) {
-    timer = window.setInterval(
-      () => updateCountdown(item.value!.endTime),
-      1000
-    );
-    updateCountdown(item.value.endTime);
-  }
-});
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer);
 });
 </script>
 
@@ -67,9 +35,8 @@ onUnmounted(() => {
       </div>
       <div class="lg:col-span-2">
         <div class="text-lg font-semibold text-center text-red-600">
-          残り時間: {{ remainingTime }}
+          <CountdownTimer v-if="item" :end-time="item.endTime" />
         </div>
-
         <div class="text-center space-y-2">
           <p class="text-2xl font-bold">
             ¥{{ numberWithComma(item.currentPrice) }}
