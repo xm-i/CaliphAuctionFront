@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/lib/utils";
@@ -7,16 +6,28 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { getAuctionItem, type AuctionDetailDto } from "@/api/auction";
 import CountdownTimer from "@/components/CountdownTimer.vue";
+import PlaceBidButton from "@/components/PlaceBidButton.vue";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
 
 const item = ref<AuctionDetailDto | null>(null);
+const errorMessage = ref<string | null>(null);
 
 onMounted(async () => {
   const data = await getAuctionItem(itemId);
   item.value = data;
 });
+
+async function refreshDetail() {
+  if (!item.value) return;
+  try {
+    const fresh = await getAuctionItem(item.value.id);
+    item.value = fresh;
+  } catch (e: any) {
+    errorMessage.value = "入札後の情報取得に失敗しました";
+  }
+}
 </script>
 
 <template>
@@ -49,8 +60,18 @@ onMounted(async () => {
           {{ item.description }}
         </p>
 
-        <div class="flex justify-center pt-4">
-          <Button size="lg">入札</Button>
+        <div class="flex flex-col items-center gap-3 pt-4">
+          <PlaceBidButton
+            v-if="item"
+            :auction-item-id="item.id"
+            :current-price="item.currentPrice"
+            :highest-bid-user-id="item.currentHighestBidUserId"
+            @placed="refreshDetail"
+            @error="(m:string)=> (errorMessage = m)"
+          />
+          <p v-if="errorMessage" class="text-red-600 text-sm">
+            {{ errorMessage }}
+          </p>
         </div>
       </div>
       <div class="lg:col-span-2">

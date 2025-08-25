@@ -42,6 +42,7 @@ export type AuctionDetailDto = {
   categoryId: number;
   categoryName: string;
   currentHighestBidUserName: string | null;
+  currentHighestBidUserId: number | null;
   bidCount: number;
   status: number;
   bidHistories: BidHistoryDto[];
@@ -50,4 +51,14 @@ export type AuctionDetailDto = {
 export async function getAuctionItem(id: number): Promise<AuctionDetailDto> {
   const { data } = await api.get<AuctionDetailDto>(`/auction/items/${id}`);
   return data;
+}
+
+// 入札API
+export type PlaceBidPayload = {
+  auctionItemId: number;
+  bidAmount: number;
+};
+
+export async function placeBid(payload: PlaceBidPayload): Promise<void> {
+  await api.post("/auction/place-bid", payload);
 }
