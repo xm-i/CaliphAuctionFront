@@ -7,8 +7,13 @@ const props = defineProps<{
   finishedText?: string;
 }>();
 
+const emit = defineEmits<{
+  (e: "finished"): void;
+}>();
+
 const interval = ref<number | undefined>(undefined);
 const display = ref("");
+let isFinished = true;
 
 const finishedText = computed(() => props.finishedText ?? "終了");
 
@@ -39,9 +44,15 @@ function tick(targetMs: number) {
     return;
   }
   if (diff <= 0) {
-    display.value = finishedText.value ?? "終了";
-    clear();
-    return;
+    if (!isFinished) {
+      display.value = finishedText.value ?? "終了";
+      clear();
+      emit("finished");
+      isFinished = true;
+      return;
+    }
+  } else {
+    isFinished = false;
   }
   display.value = format(diff);
 }

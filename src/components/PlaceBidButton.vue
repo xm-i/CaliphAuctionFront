@@ -13,6 +13,7 @@ const props = defineProps<{
   disabled?: boolean;
   label?: string;
   highestBidUserId: number | null;
+  loading: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -61,10 +62,11 @@ async function onClick() {
     <div class="text-sm text-muted-foreground">
       次の入札額: ¥{{ numberWithComma(nextAmount) }}
     </div>
+    <Button v-if="loading" size="lg" disabled> 更新中 </Button>
     <Button
-      v-if="!isAuthenticated"
+      v-else-if="!isAuthenticated"
       size="lg"
-      :disabled="placing"
+      :disabled="disabled"
       @click="onClick"
     >
       ログインして入札

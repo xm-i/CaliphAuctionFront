@@ -14,6 +14,7 @@ const itemId = Number(route.params.id);
 
 const item = ref<AuctionDetailDto | null>(null);
 const errorMessage = ref<string | null>(null);
+const refreshing = ref(false);
 
 onMounted(async () => {
   const data = await getAuctionItem(itemId);
@@ -59,6 +60,20 @@ async function refreshDetail() {
     errorMessage.value = "入札後の情報取得に失敗しました";
   }
 }
+
+async function onTimerFinished() {
+  if (!item.value || refreshing.value) return;
+  refreshing.value = true;
+  errorMessage.value = null;
+  try {
+    const fresh = await getAuctionItem(item.value.id);
+    item.value = fresh;
+  } catch (e: any) {
+    errorMessage.value = "終了時の情報取得に失敗しました";
+  } finally {
+    refreshing.value = false;
+  }
+}
 </script>
 
 <template>
@@ -77,7 +92,11 @@ async function refreshDetail() {
       </div>
       <div class="lg:col-span-2">
         <div class="text-lg font-semibold text-center text-red-600">
-          <CountdownTimer v-if="item" :end-time="item.endTime" />
+          <CountdownTimer
+            v-if="item"
+            :end-time="item.endTime"
+            @finished="onTimerFinished"
+          />
         </div>
         <div class="text-center space-y-2">
           <p class="text-2xl font-bold">
@@ -97,6 +116,7 @@ async function refreshDetail() {
             :auction-item-id="item.id"
             :current-price="item.currentPrice"
             :highest-bid-user-id="item.currentHighestBidUserId"
+            :loading="refreshing"
             @placed="refreshDetail"
             @error="(m:string)=> (errorMessage = m)"
           />
