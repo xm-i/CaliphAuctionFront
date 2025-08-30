@@ -2,11 +2,12 @@
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/lib/utils";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { getAuctionItem, type AuctionDetailDto } from "@/api/auction";
 import CountdownTimer from "@/components/CountdownTimer.vue";
 import PlaceBidButton from "@/components/PlaceBidButton.vue";
+import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
@@ -17,6 +18,36 @@ const errorMessage = ref<string | null>(null);
 onMounted(async () => {
   const data = await getAuctionItem(itemId);
   item.value = data;
+  await auctionHub.subscribeItem(itemId);
+  stopUpdate = auctionHub.onBidUpdate((u: BidUpdateDto) => {
+    if (!item.value) {
+      return;
+    }
+    if (u.auctionItemId !== itemId) {
+      return;
+    }
+
+    item.value.currentPrice = u.currentPrice;
+    item.value.endTime = new Date(u.endTime);
+    item.value.currentHighestBidUserId = u.currentHighestBidUserId;
+    item.value.currentHighestBidUserName = u.currentHighestBidUserName;
+    item.value.bidCount++;
+
+    item.value.bidHistories.push({
+      id: u.bidId,
+      userName: u.currentHighestBidUserName,
+      bidAmount: u.currentPrice,
+      bidTime: new Date(u.bidTime),
+    });
+  });
+});
+
+let stopUpdate: (() => void) | null = null;
+onUnmounted(async () => {
+  if (stopUpdate) {
+    stopUpdate();
+  }
+  await auctionHub.unsubscribeItem(itemId);
 });
 
 async function refreshDetail() {

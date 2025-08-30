@@ -5,7 +5,7 @@ export type SearchItemDto = {
   name: string;
   thumbnailImageUrl: string;
   currentPrice: number;
-  endTime: string;
+  endTime: Date;
   categoryId: number;
   currentUserName: string | null;
 };

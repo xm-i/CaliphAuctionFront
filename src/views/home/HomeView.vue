@@ -3,6 +3,7 @@ import AuctionItemCard from "@/components/AuctionItemCard.vue";
 import type { SearchItemDto } from "@/api/auction";
 import { ref, onMounted } from "vue";
 import { searchAuctions } from "@/api/auction";
+import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
 
 const items = ref<SearchItemDto[]>([]);
 const loading = ref(false);
@@ -14,6 +15,8 @@ async function fetchItems() {
   try {
     const res = await searchAuctions();
     items.value = res.items;
+    const ids = items.value.map((x) => x.id);
+    await auctionHub.setVisibleItems(ids);
   } catch (e: any) {
     error.value = "取得に失敗しました";
   } finally {
@@ -21,7 +24,19 @@ async function fetchItems() {
   }
 }
 
-onMounted(fetchItems);
+onMounted(async () => {
+  await fetchItems();
+  auctionHub.onBidUpdate((dto: BidUpdateDto) => {
+    const index = items.value.findIndex((x) => x.id === dto.auctionItemId);
+    if (index >= 0) {
+      const updated = { ...items.value[index] };
+      updated.currentPrice = dto.currentPrice;
+      updated.endTime = dto.endTime;
+      updated.currentUserName = dto.currentHighestBidUserName;
+      items.value.splice(index, 1, updated);
+    }
+  });
+});
 </script>
 
 <template>
