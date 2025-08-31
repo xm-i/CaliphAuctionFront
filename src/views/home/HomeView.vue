@@ -1,9 +1,13 @@
 <script lang="ts" setup>
 import AuctionItemCard from "@/components/AuctionItemCard.vue";
 import type { SearchItemDto } from "@/api/auction";
-import { ref, onMounted } from "vue";
-import { searchAuctions, getAuctionItem } from "@/api/auction";
-import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
+import { ref, onMounted, onUnmounted } from "vue";
+import { searchAuctions, getAuctionItem, AuctionStatus } from "@/api/auction";
+import {
+  auctionHub,
+  type BidUpdateDto,
+  type AuctionClosedDto,
+} from "@/realtime/auctionHub";
 
 const items = ref<SearchItemDto[]>([]);
 const loading = ref(false);
@@ -24,9 +28,12 @@ async function fetchItems() {
   }
 }
 
+let unbindUpdate: (() => void) | null = null;
+let unbindClosed: (() => void) | null = null;
+
 onMounted(async () => {
   await fetchItems();
-  auctionHub.onBidUpdate((dto: BidUpdateDto) => {
+  unbindUpdate = auctionHub.onBidUpdate((dto: BidUpdateDto) => {
     const index = items.value.findIndex((x) => x.id === dto.auctionItemId);
     if (index >= 0) {
       const updated = { ...items.value[index] };
@@ -37,6 +44,25 @@ onMounted(async () => {
       items.value.splice(index, 1, updated);
     }
   });
+
+  unbindClosed = auctionHub.onAuctionClosed(
+    async (closed: AuctionClosedDto) => {
+      const index = items.value.findIndex((x) => x.id === closed.auctionItemId);
+      if (index >= 0 && items.value[index]?.status === AuctionStatus.Ended) {
+        return;
+      }
+      await refreshItem(closed.auctionItemId);
+    }
+  );
+});
+
+onUnmounted(() => {
+  if (unbindUpdate) {
+    unbindUpdate();
+  }
+  if (unbindClosed) {
+    unbindClosed();
+  }
 });
 
 async function refreshItem(id: number) {
@@ -48,6 +74,7 @@ async function refreshItem(id: number) {
     updated.endTime = fresh.endTime;
     updated.currentHighestBidUserId = fresh.currentHighestBidUserId;
     updated.currentHighestBidUserName = fresh.currentHighestBidUserName;
+    (updated as any).status = (fresh as any).status ?? updated.status;
     items.value.splice(index, 1, updated);
   }
 }

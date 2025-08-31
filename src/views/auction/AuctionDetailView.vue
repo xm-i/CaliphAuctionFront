@@ -4,7 +4,11 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/lib/utils";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
-import { getAuctionItem, type AuctionDetailDto } from "@/api/auction";
+import {
+  AuctionStatus,
+  getAuctionItem,
+  type AuctionDetailDto,
+} from "@/api/auction";
 import CountdownTimer from "@/components/CountdownTimer.vue";
 import PlaceBidButton from "@/components/PlaceBidButton.vue";
 import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
@@ -20,7 +24,7 @@ onMounted(async () => {
   const data = await getAuctionItem(itemId);
   item.value = data;
   await auctionHub.subscribeItem(itemId);
-  stopUpdate = auctionHub.onBidUpdate((u: BidUpdateDto) => {
+  unbindUpdate = auctionHub.onBidUpdate((u: BidUpdateDto) => {
     if (!item.value) {
       return;
     }
@@ -41,12 +45,22 @@ onMounted(async () => {
       bidTime: new Date(u.bidTime),
     });
   });
+  unbindClosed = auctionHub.onAuctionClosed(async () => {
+    if (item.value?.status === AuctionStatus.Ended) {
+      return;
+    }
+    await onTimerFinished();
+  });
 });
 
-let stopUpdate: (() => void) | null = null;
+let unbindUpdate: (() => void) | null = null;
+let unbindClosed: (() => void) | null = null;
 onUnmounted(async () => {
-  if (stopUpdate) {
-    stopUpdate();
+  if (unbindUpdate) {
+    unbindUpdate();
+  }
+  if (unbindClosed) {
+    unbindClosed();
   }
   await auctionHub.unsubscribeItem(itemId);
 });

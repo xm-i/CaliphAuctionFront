@@ -1,3 +1,4 @@
+import { AuctionStatus } from "@/api/auction";
 import * as signalR from "@microsoft/signalr";
 
 export type BidUpdateDto = {
@@ -11,10 +12,19 @@ export type BidUpdateDto = {
 };
 
 type Handler = (u: BidUpdateDto) => void;
+export type AuctionClosedDto = {
+  auctionItemId: number;
+  finalPrice: number;
+  endTime: string;
+  status: AuctionStatus;
+  winnerUserId: number;
+};
+type ClosedHandler = (c: AuctionClosedDto) => void;
 
 class AuctionHubClient {
   private connection: signalR.HubConnection | null = null;
   private handlers = new Set<Handler>();
+  private closedHandlers = new Set<ClosedHandler>();
   private joined = new Set<number>();
 
   private buildBaseUrl() {
@@ -38,6 +48,10 @@ class AuctionHubClient {
       for (const h of this.handlers) h(u);
     });
 
+    this.connection.on("ReceiveAuctionClosed", (c: AuctionClosedDto) => {
+      for (const h of this.closedHandlers) h(c);
+    });
+
     await this.connection.start();
     this.connection.onreconnected(async () => {
       if (!this.connection) return;
@@ -53,6 +67,11 @@ class AuctionHubClient {
   onBidUpdate(handler: Handler) {
     this.handlers.add(handler);
     return () => this.handlers.delete(handler);
+  }
+
+  onAuctionClosed(handler: ClosedHandler) {
+    this.closedHandlers.add(handler);
+    return () => this.closedHandlers.delete(handler);
   }
 
   async subscribeItem(id: number) {
