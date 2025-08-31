@@ -9,9 +9,7 @@ import { placeBid } from "@/api/auction";
 const props = defineProps<{
   auctionItemId: number;
   currentPrice: number;
-  increment?: number;
   disabled?: boolean;
-  label?: string;
   highestBidUserId: number | null;
   loading: boolean;
 }>();
@@ -26,8 +24,7 @@ const router = useRouter();
 const route = useRoute();
 const { isAuthenticated, user } = useAuth();
 
-const inc = computed(() => props.increment ?? 1);
-const nextAmount = computed(() => props.currentPrice + inc.value);
+const nextAmount = computed(() => props.currentPrice + 1);
 const isSelfHighest = computed(
   () =>
     user.value?.id != null &&
@@ -40,7 +37,9 @@ async function onClick() {
     router.push({ name: "signin", query: { redirect: route.fullPath } });
     return;
   }
-  if (props.disabled || placing.value || isSelfHighest.value) return;
+  if (props.loading || props.disabled || placing.value || isSelfHighest.value) {
+    return;
+  }
   placing.value = true;
   try {
     await placeBid({
@@ -75,7 +74,7 @@ async function onClick() {
       最高入札者です
     </Button>
     <Button v-else size="lg" :disabled="placing || !!disabled" @click="onClick">
-      {{ placing ? "処理中..." : label ?? `入札` }}
+      {{ placing ? "処理中..." : "入札" }}
     </Button>
     <p v-if="isSelfHighest" class="text-xs text-muted-foreground">
       あなたが最高入札者です

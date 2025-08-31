@@ -2,7 +2,7 @@
 import AuctionItemCard from "@/components/AuctionItemCard.vue";
 import type { SearchItemDto } from "@/api/auction";
 import { ref, onMounted } from "vue";
-import { searchAuctions } from "@/api/auction";
+import { searchAuctions, getAuctionItem } from "@/api/auction";
 import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
 
 const items = ref<SearchItemDto[]>([]);
@@ -31,12 +31,26 @@ onMounted(async () => {
     if (index >= 0) {
       const updated = { ...items.value[index] };
       updated.currentPrice = dto.currentPrice;
-      updated.endTime = dto.endTime;
-      updated.currentUserName = dto.currentHighestBidUserName;
+      updated.endTime = new Date(dto.endTime);
+      updated.currentHighestBidUserId = dto.currentHighestBidUserId;
+      updated.currentHighestBidUserName = dto.currentHighestBidUserName;
       items.value.splice(index, 1, updated);
     }
   });
 });
+
+async function refreshItem(id: number) {
+  const index = items.value.findIndex((x) => x.id === id);
+  if (index >= 0) {
+    const fresh = await getAuctionItem(id);
+    const updated = { ...items.value[index] };
+    updated.currentPrice = fresh.currentPrice;
+    updated.endTime = fresh.endTime;
+    updated.currentHighestBidUserId = fresh.currentHighestBidUserId;
+    updated.currentHighestBidUserName = fresh.currentHighestBidUserName;
+    items.value.splice(index, 1, updated);
+  }
+}
 </script>
 
 <template>
@@ -50,7 +64,12 @@ onMounted(async () => {
         <div
           class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
         >
-          <AuctionItemCard v-for="item in items" :key="item.id" :item="item" />
+          <AuctionItemCard
+            v-for="item in items"
+            :key="item.id"
+            :item="item"
+            @refresh="refreshItem"
+          />
         </div>
         <div
           v-if="!items.length"

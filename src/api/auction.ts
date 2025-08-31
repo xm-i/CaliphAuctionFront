@@ -7,7 +7,8 @@ export type SearchItemDto = {
   currentPrice: number;
   endTime: Date;
   categoryId: number;
-  currentUserName: string | null;
+  currentHighestBidUserName: string | null;
+  currentHighestBidUserId: number | null;
 };
 
 type SearchResponse = {

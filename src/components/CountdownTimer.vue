@@ -43,18 +43,18 @@ function tick(targetMs: number) {
     display.value = "-";
     return;
   }
-  if (diff <= 0) {
+  if (diff <= -1000) {
     if (!isFinished) {
-      display.value = finishedText.value ?? "終了";
       clear();
       emit("finished");
       isFinished = true;
       return;
     }
+    display.value = finishedText.value ?? "終了";
   } else {
     isFinished = false;
+    display.value = format(diff);
   }
-  display.value = format(diff);
 }
 
 function clear() {
