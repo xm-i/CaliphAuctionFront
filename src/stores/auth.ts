@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { login as loginApi, type LoginPayload, type User } from "@/api/auth";
+import { isJwtValid } from "@/lib/jwt";
 
 export const useAuthStore = defineStore("auth", () => {
   const authed = ref<boolean>(!!localStorage.getItem("auth_token"));
@@ -15,7 +16,7 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = null;
     try {
       const res = await loginApi(payload);
-      authed.value = true;
+      authed.value = isJwtValid(res.accessToken);
       user.value = res.user;
       return res.accessToken;
     } catch (e: any) {
@@ -33,5 +34,27 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = null;
   }
 
-  return { isAuthenticated, loading, error, user, login, logout };
+  function updateAuthenticatedStatus() {
+    const token = localStorage.getItem("auth_token") || "";
+    const valid = isJwtValid(token);
+    authed.value = valid;
+    if (!valid) {
+      localStorage.removeItem("auth_token");
+      user.value = null;
+    }
+  }
+
+  (function initFromToken() {
+    updateAuthenticatedStatus();
+  })();
+
+  return {
+    isAuthenticated,
+    loading,
+    error,
+    user,
+    login,
+    logout,
+    updateAuthenticatedStatus,
+  };
 });

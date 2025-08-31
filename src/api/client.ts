@@ -45,7 +45,16 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const status = error.response?.status;
     if (status === 401) {
-      localStorage.removeItem("auth_token");
+      try {
+        localStorage.removeItem("auth_token");
+      } catch {}
+      const path =
+        typeof window !== "undefined" ? window.location.pathname : "";
+      if (typeof window !== "undefined" && !path.startsWith("/signin")) {
+        const full = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        const redirect = encodeURIComponent(full || "/");
+        window.location.assign(`/signin?redirect=${redirect}`);
+      }
     }
     return Promise.reject(error);
   }
