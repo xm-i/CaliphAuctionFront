@@ -35,6 +35,40 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
   {
+    path: "/mypage",
+    name: "mypage",
+    meta: { requiresAuth: true },
+    component: () =>
+      import(/* webpackChunkName: "mypage" */ "../views/mypage/MyPageView.vue"),
+  },
+  {
+    path: "/mypage/won",
+    name: "mypage-won",
+    meta: { requiresAuth: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "mypage-won" */ "../views/mypage/WonItemsView.vue"
+      ),
+  },
+  {
+    path: "/mypage/bidding",
+    name: "mypage-bidding",
+    meta: { requiresAuth: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "mypage-bidding" */ "../views/mypage/BiddingItemsView.vue"
+      ),
+  },
+  {
+    path: "/mypage/charge",
+    name: "mypage-charge",
+    meta: { requiresAuth: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "mypage-charge" */ "../views/mypage/ChargePointsView.vue"
+      ),
+  },
+  {
     path: "/auction/:id",
     name: "auction-detail",
     component: () =>
