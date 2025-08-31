@@ -117,6 +117,7 @@ async function onTimerFinished() {
             :current-price="item.currentPrice"
             :highest-bid-user-id="item.currentHighestBidUserId"
             :loading="refreshing"
+            :status="item.status"
             @placed="refreshDetail"
             @error="(m:string)=> (errorMessage = m)"
           />

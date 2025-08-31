@@ -1,5 +1,11 @@
 import api from "./client";
 
+export enum AuctionStatus {
+  Preparing = 0,
+  Active = 1,
+  Ended = 2,
+}
+
 export type SearchItemDto = {
   id: number;
   name: string;
@@ -7,6 +13,7 @@ export type SearchItemDto = {
   currentPrice: number;
   endTime: Date;
   categoryId: number;
+  status: AuctionStatus;
   currentHighestBidUserName: string | null;
   currentHighestBidUserId: number | null;
 };
@@ -45,7 +52,7 @@ export type AuctionDetailDto = {
   currentHighestBidUserName: string | null;
   currentHighestBidUserId: number | null;
   bidCount: number;
-  status: number;
+  status: AuctionStatus;
   bidHistories: BidHistoryDto[];
 };
 

@@ -62,6 +62,7 @@ watch(
         :current-price="props.item.currentPrice"
         :highest-bid-user-id="props.item.currentHighestBidUserId"
         :loading="refreshing"
+        :status="props.item.status"
       />
     </CardContent>
   </Card>
