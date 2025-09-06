@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
+import { useRouter } from "vue-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -20,9 +21,71 @@ const biddingItems = ref<Array<{ id: number; name: string; current: number }>>([
   { id: 20, name: "入札中1", current: 111 },
   { id: 21, name: "入札中2", current: 222 },
 ]);
+
+// ポイント購入画面をポップアップで開く
+const router = useRouter();
+const overlayActive = ref(false);
+let pollId: number | null = null;
+
+const clearPolling = () => {
+  if (pollId != null) {
+    window.clearInterval(pollId);
+    pollId = null;
+  }
+};
+
+onBeforeUnmount(() => {
+  clearPolling();
+});
+
+const openChargeWindow = () => {
+  const width = 600;
+  const height = 900;
+  // 画面中央配置計算（マルチモニタ対応簡易版）
+  const dualLeft = window.screenLeft ?? window.screenX ?? 0;
+  const dualTop = window.screenTop ?? window.screenY ?? 0;
+  const screenW =
+    window.innerWidth ?? document.documentElement.clientWidth ?? screen.width;
+  const screenH =
+    window.innerHeight ??
+    document.documentElement.clientHeight ??
+    screen.height;
+  const left = dualLeft + (screenW - width) / 2;
+  const top = dualTop + (screenH - height) / 2;
+  const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+  const win = window.open("/mypage/charge", "chargePointsWindow", features);
+  // ポップアップブロックされた場合は通常遷移
+  if (!win) {
+    router.push({ name: "mypage-charge" });
+  } else {
+    win.focus();
+    overlayActive.value = true; // マイページ操作不可
+    clearPolling();
+    pollId = window.setInterval(() => {
+      if (win.closed) {
+        overlayActive.value = false;
+        clearPolling();
+      }
+    }, 200);
+  }
+};
 </script>
 
 <template>
+  <!-- グレーオーバーレイ（ポップアップ開いている間） -->
+  <div
+    v-if="overlayActive"
+    class="fixed inset-0 z-[999] bg-background/70 dark:bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4 select-none"
+  >
+    <div
+      class="text-sm font-medium text-foreground/90 px-4 py-2 rounded-md bg-card/80 border shadow-sm"
+    >
+      ポイント購入ウィンドウを操作してください
+    </div>
+    <div class="text-xs text-muted-foreground">
+      閉じると自動で操作可能になります…
+    </div>
+  </div>
   <section class="container lg:w-[90%] space-y-6 py-6">
     <h1 class="text-3xl font-bold">マイページ</h1>
 
@@ -33,11 +96,7 @@ const biddingItems = ref<Array<{ id: number; name: string; current: number }>>([
           <h2 class="font-semibold mb-2">所持ポイント</h2>
           <p class="text-2xl">{{ points.toLocaleString() }} pt</p>
           <div class="mt-3">
-            <Button as-child>
-              <router-link :to="{ name: 'mypage-charge' }"
-                >ポイント購入へ</router-link
-              >
-            </Button>
+            <Button @click="openChargeWindow">ポイント購入へ</Button>
           </div>
         </div>
         <div class="rounded-lg border p-4 bg-card">

@@ -62,10 +62,28 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/mypage/charge",
     name: "mypage-charge",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, blankLayout: true },
     component: () =>
       import(
-        /* webpackChunkName: "mypage-charge" */ "../views/mypage/ChargePointsView.vue"
+        /* webpackChunkName: "points-charge" */ "../views/points/ChargePointsView.vue"
+      ),
+  },
+  {
+    path: "/points/paypal-login",
+    name: "points-paypal-login",
+    meta: { requiresAuth: true, blankLayout: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "points-paypal-login" */ "../views/points/PaypalLoginView.vue"
+      ),
+  },
+  {
+    path: "/points/complete",
+    name: "points-complete",
+    meta: { requiresAuth: true, blankLayout: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "points-complete" */ "../views/points/PurchaseCompleteView.vue"
       ),
   },
   {
