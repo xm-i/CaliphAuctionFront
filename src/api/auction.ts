@@ -18,7 +18,7 @@ export type SearchItemDto = {
   currentHighestBidUserId: number | null;
 };
 
-type SearchResponse = {
+export type SearchResponse = {
   items: SearchItemDto[];
   totalCount: number;
 };

@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from "vue";
+import { ref, onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import {
+  getMeSummary,
+  NotificationDto,
+  getWonItems,
+  getBiddingItems,
+} from "@/api/me";
+import type { SearchItemDto } from "@/api/auction";
 
-// プレースホルダーの疑似データ
-const news = ref<Array<{ id: number; title: string; date: string }>>([
-  { id: 1, title: "落札おめでとうございます", date: "2025-08-31" },
-  { id: 2, title: "ポイントチャージが完了しました", date: "2025-08-30" },
-]);
-
+// API 取得データ
+const news = ref<NotificationDto[]>([]);
 const totalSpent = ref<number>(0);
 const points = ref<number>(0);
+const loading = ref<boolean>(false);
+const error = ref<string | null>(null);
 
-const wonItems = ref<Array<{ id: number; name: string; price: number }>>([
-  { id: 10, name: "サンプル落札1", price: 1234 },
-  { id: 11, name: "サンプル落札2", price: 5678 },
-]);
-const biddingItems = ref<Array<{ id: number; name: string; current: number }>>([
-  { id: 20, name: "入札中1", current: 111 },
-  { id: 21, name: "入札中2", current: 222 },
-]);
+const wonItems = ref<SearchItemDto[]>([]);
+const biddingItems = ref<SearchItemDto[]>([]);
+const loadingItems = ref(false);
+const itemsError = ref<string | null>(null);
 
 // ポイント購入画面をポップアップで開く
 const router = useRouter();
@@ -38,10 +39,48 @@ onBeforeUnmount(() => {
   clearPolling();
 });
 
+// サマリー取得
+const fetchSummary = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const data = await getMeSummary();
+    points.value = data.pointBalance;
+    totalSpent.value = data.totalSpentAmount;
+    news.value = data.notifications;
+  } catch (e: any) {
+    error.value = "サマリー取得に失敗しました";
+  } finally {
+    loading.value = false;
+  }
+};
+
+// 落札/入札中アイテム取得
+const fetchMyPageItems = async () => {
+  loadingItems.value = true;
+  itemsError.value = null;
+  try {
+    const [won, bidding] = await Promise.all([
+      getWonItems(5),
+      getBiddingItems(5),
+    ]);
+    wonItems.value = won.items;
+    biddingItems.value = bidding.items;
+  } catch (e: any) {
+    itemsError.value = "アイテム取得に失敗しました";
+  } finally {
+    loadingItems.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchSummary();
+  fetchMyPageItems();
+});
+
 const openChargeWindow = () => {
   const width = 600;
   const height = 900;
-  // 画面中央配置計算（マルチモニタ対応簡易版）
   const dualLeft = window.screenLeft ?? window.screenX ?? 0;
   const dualTop = window.screenTop ?? window.screenY ?? 0;
   const screenW =
@@ -65,6 +104,7 @@ const openChargeWindow = () => {
       if (win.closed) {
         overlayActive.value = false;
         clearPolling();
+        fetchSummary();
       }
     }, 200);
   }
@@ -108,10 +148,31 @@ const openChargeWindow = () => {
       <!-- 新着情報 -->
       <div class="col-span-2 rounded-lg border p-4 bg-card">
         <h2 class="font-semibold mb-3">新着情報</h2>
-        <ul class="space-y-2">
-          <li v-for="n in news" :key="n.id" class="flex justify-between">
-            <span>{{ n.title }}</span>
-            <span class="text-muted-foreground text-sm">{{ n.date }}</span>
+        <div v-if="loading" class="text-sm text-muted-foreground py-2">
+          読み込み中...
+        </div>
+        <div v-else-if="error" class="text-sm text-red-500 py-2">
+          {{ error }}
+        </div>
+        <ul v-else class="space-y-2">
+          <li v-if="!news.length" class="text-sm text-muted-foreground py-1">
+            新着情報はありません。
+          </li>
+          <li
+            v-for="n in news"
+            :key="n.id"
+            class="flex justify-between items-start gap-3"
+          >
+            <span
+              :class="['text-sm', n.isRead ? 'opacity-70' : 'font-semibold']"
+            >
+              {{ n.title }}
+            </span>
+            <span
+              class="text-muted-foreground text-xs whitespace-nowrap mt-0.5"
+            >
+              {{ n.createdAt.getDate() }}
+            </span>
           </li>
         </ul>
       </div>
@@ -135,7 +196,7 @@ const openChargeWindow = () => {
         >
           <p class="font-medium line-clamp-1">{{ w.name }}</p>
           <p class="text-sm text-muted-foreground">
-            ¥{{ w.price.toLocaleString() }}
+            ¥{{ w.currentPrice.toLocaleString() }}
           </p>
         </div>
       </div>
@@ -159,7 +220,7 @@ const openChargeWindow = () => {
         >
           <p class="font-medium line-clamp-1">{{ b.name }}</p>
           <p class="text-sm text-muted-foreground">
-            現在 ¥{{ b.current.toLocaleString() }}
+            現在 ¥{{ b.currentPrice.toLocaleString() }}
           </p>
         </div>
       </div>
