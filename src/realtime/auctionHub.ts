@@ -26,6 +26,20 @@ class AuctionHubClient {
   private handlers = new Set<Handler>();
   private closedHandlers = new Set<ClosedHandler>();
   private joined = new Set<number>();
+  private stateListeners = new Set<
+    (state: "connected" | "disconnected" | "reconnecting") => void
+  >();
+
+  onStateChange(
+    cb: (state: "connected" | "disconnected" | "reconnecting") => void
+  ) {
+    this.stateListeners.add(cb);
+    return () => this.stateListeners.delete(cb);
+  }
+
+  private notify(state: "connected" | "disconnected" | "reconnecting") {
+    for (const l of this.stateListeners) l(state);
+  }
 
   private buildBaseUrl() {
     const base = import.meta.env.VITE_API_BASE_URL || "";
@@ -52,7 +66,18 @@ class AuctionHubClient {
       for (const h of this.closedHandlers) h(c);
     });
 
+    this.connection.onreconnecting(() => {
+      this.notify("reconnecting");
+    });
+    this.connection.onreconnected(() => {
+      this.notify("connected");
+    });
+    this.connection.onclose(() => {
+      this.notify("disconnected");
+    });
+
     await this.connection.start();
+    this.notify("connected");
     this.connection.onreconnected(async () => {
       if (!this.connection) return;
       const ids = Array.from(this.joined);
