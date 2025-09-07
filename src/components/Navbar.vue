@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useColorMode } from "@vueuse/core";
 import {
   NavigationMenu,
@@ -16,6 +16,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ import { ChevronsDown, Menu } from "lucide-vue-next";
 import GithubIcon from "@/icons/GithubIcon.vue";
 import ToggleTheme from "./ToggleTheme.vue";
 import { useAuth } from "@/composables/useAuth";
+import { getCategories, type CategoryDto } from "@/api/auction";
+import { useRoute } from "vue-router";
 
 type NavAuth = "public" | "auth" | "guest";
 interface RouteProps {
@@ -37,6 +40,7 @@ interface CategoryProps {
   to: string;
   name: string;
   description: string;
+  activeItemCount: number;
 }
 
 const routeList: RouteProps[] = [
@@ -61,39 +65,64 @@ const routeList: RouteProps[] = [
     auth: "auth",
   },
   {
-    to: "/watch",
-    label: "ウォッチ",
-    auth: "auth",
-  },
-  {
     to: "/about",
     label: "オークションについて",
     auth: "public",
   },
 ];
-const categoryList: CategoryProps[] = [
-  {
-    to: "/Category1",
-    name: "category1",
-    description: "category 1",
-  },
-  {
-    to: "/Category2",
-    name: "category2",
-    description: "category 2",
-  },
-  {
-    to: "/Category3",
-    name: "category3",
-    description: "category 3",
-  },
-];
+const categoryList = ref<CategoryProps[]>([]);
+const loadingCategories = ref(false);
+const categoryError = ref<string | null>(null);
+
+async function loadCategories() {
+  loadingCategories.value = true;
+  categoryError.value = null;
+  try {
+    const data = await getCategories();
+    categoryList.value = data.map((c: CategoryDto) => ({
+      to: `/search?categoryId=${c.id}`,
+      name: c.name,
+      description: c.description,
+      activeItemCount: c.activeItemCount,
+    }));
+  } catch {
+    categoryError.value = "カテゴリ取得失敗";
+  } finally {
+    loadingCategories.value = false;
+  }
+}
 
 const isOpen = ref<boolean>(false);
+const route = useRoute();
+// desktop navigation menu re-render key to force close after navigation
+const navMenuKey = ref(0);
 
 const mode = useColorMode();
 
 const { isAuthenticated, user } = useAuth();
+
+onMounted(() => {
+  loadCategories();
+});
+
+// ルート遷移時に自動で閉じる（カテゴリクリック後に開きっぱなし対策）
+watch(
+  () => route.fullPath,
+  () => {
+    if (isOpen.value) {
+      isOpen.value = false;
+    }
+    navMenuKey.value++;
+  }
+);
+
+function closeDesktopMenu() {
+  try {
+    const active = document.activeElement as HTMLElement | null;
+    active?.blur?.();
+  } catch {}
+  navMenuKey.value++;
+}
 
 const visibleRouteList = computed(() => {
   return routeList.filter((item) => {
@@ -144,35 +173,61 @@ const visibleRouteList = computed(() => {
             </SheetHeader>
 
             <div class="flex flex-col gap-1">
-              <Button as-child variant="ghost" class="justify-start text-base">
-                <router-link @click="isOpen = false" to="a">
-                  すべてのカテゴリ
-                </router-link>
-              </Button>
-              <div class="flex flex-col gap-1 pl-5 justify-start">
+              <SheetClose as-child>
                 <Button
-                  v-for="{ to, name } in categoryList"
-                  :key="name"
                   as-child
                   variant="ghost"
                   class="justify-start text-base"
                 >
-                  <router-link @click="isOpen = false" :to="to">
-                    {{ name }}
-                  </router-link>
+                  <router-link to="/search"> すべてのカテゴリ </router-link>
                 </Button>
+              </SheetClose>
+              <div class="flex flex-col gap-1 pl-5 justify-start">
+                <div
+                  v-if="loadingCategories"
+                  class="px-4 text-sm text-muted-foreground"
+                >
+                  読み込み中...
+                </div>
+                <div
+                  v-else-if="categoryError"
+                  class="px-4 text-sm text-red-500"
+                >
+                  {{ categoryError }}
+                </div>
+                <SheetClose
+                  v-else
+                  v-for="{ to, name, activeItemCount } in categoryList"
+                  :key="name"
+                  as-child
+                >
+                  <Button
+                    as-child
+                    variant="ghost"
+                    class="justify-start text-base"
+                  >
+                    <router-link :to="to">
+                      {{ name }}
+                      <span class="text-xs text-muted-foreground"
+                        >({{ activeItemCount }})</span
+                      >
+                    </router-link>
+                  </Button>
+                </SheetClose>
               </div>
-              <Button
+              <SheetClose
                 v-for="{ to, label } in visibleRouteList"
                 :key="label"
                 as-child
-                variant="ghost"
-                class="justify-start text-base"
               >
-                <router-link @click="isOpen = false" :to="to">
-                  {{ label }}
-                </router-link>
-              </Button>
+                <Button
+                  as-child
+                  variant="ghost"
+                  class="justify-start text-base"
+                >
+                  <router-link :to="to">{{ label }}</router-link>
+                </Button>
+              </SheetClose>
             </div>
           </div>
 
@@ -186,7 +241,7 @@ const visibleRouteList = computed(() => {
     </div>
 
     <!-- Desktop -->
-    <NavigationMenu class="hidden lg:block">
+    <NavigationMenu class="hidden lg:block" :key="navMenuKey">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger class="bg-card text-base">
@@ -196,11 +251,21 @@ const visibleRouteList = computed(() => {
             <div class="grid w-[600px] grid-cols-2 gap-5 p-4">
               <ul class="flex flex-col gap-2">
                 <li
+                  v-if="loadingCategories"
+                  class="p-3 text-sm text-muted-foreground"
+                >
+                  読み込み中...
+                </li>
+                <li v-else-if="categoryError" class="p-3 text-sm text-red-500">
+                  {{ categoryError }}
+                </li>
+                <li
+                  v-else
                   v-for="{ to, name, description } in categoryList"
                   :key="name"
                   class="rounded-md p-3 text-sm hover:bg-muted"
                 >
-                  <router-link :to="to">
+                  <router-link :to="to" @click="closeDesktopMenu">
                     <p class="mb-1 font-semibold leading-none text-foreground">
                       {{ name }}
                     </p>
@@ -227,7 +292,9 @@ const visibleRouteList = computed(() => {
               variant="ghost"
               class="justify-start text-base"
             >
-              <router-link :to="to">{{ label }}</router-link>
+              <router-link :to="to" @click="closeDesktopMenu">{{
+                label
+              }}</router-link>
             </Button>
           </NavigationMenuLink>
         </NavigationMenuItem>

@@ -112,6 +112,13 @@ onMounted(async () => {
 onUnmounted(() => {
   detachHubHandlers();
 });
+
+defineExpose({
+  reload: async () => {
+    await load();
+    await auctionHub.setVisibleItems(items.value.map((x) => x.id));
+  },
+});
 </script>
 
 <template>

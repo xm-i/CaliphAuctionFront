@@ -95,6 +95,12 @@ const routes: Array<RouteRecordRaw> = [
       ),
     props: true,
   },
+  {
+    path: "/search",
+    name: "search",
+    component: () =>
+      import(/* webpackChunkName: "search" */ "../views/search/SearchView.vue"),
+  },
 ];
 
 const router = createRouter({
