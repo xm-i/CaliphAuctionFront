@@ -72,38 +72,66 @@ const cancel = () => {
       <h1 class="font-semibold tracking-tight">PayPal ログイン</h1>
       <Button size="sm" variant="ghost" @click="cancel">戻る</Button>
     </header>
-    <main class="flex-1 px-5 py-6">
-      <div class="mx-auto max-w-md space-y-6">
-        <Card v-if="plan" class="border-primary/40">
+    <main class="flex-1 px-5 py-8">
+      <div class="mx-auto max-w-2xl space-y-8">
+        <div class="flex flex-col gap-3">
+          <h2
+            class="text-lg font-semibold tracking-tight flex items-center gap-2"
+          >
+            <span class="inline-block w-1.5 h-4 rounded bg-primary/70"></span>
+            PayPal ログイン
+          </h2>
+          <p class="text-xs text-muted-foreground leading-relaxed">
+            選択したポイントプランを PayPal で決済します。
+          </p>
+        </div>
+
+        <Card
+          v-if="plan"
+          class="border border-primary/30 bg-card/60 backdrop-blur-sm"
+        >
           <CardHeader class="pb-2">
             <CardTitle class="text-base flex flex-col gap-1">
-              <span class="text-sm text-muted-foreground">選択中のプラン</span>
-              <span class="text-lg font-bold">{{ plan.name }}</span>
+              <span class="text-xs text-muted-foreground font-normal"
+                >選択中のプラン</span
+              >
+              <span class="text-lg font-bold tracking-tight">{{
+                plan.name
+              }}</span>
             </CardTitle>
           </CardHeader>
-          <CardContent class="pt-0 text-sm space-y-1">
-            <p>
-              ポイント: <strong>{{ plan.points.toLocaleString() }}</strong> pt
-            </p>
-            <p>
-              価格: <strong>\{{ plan.price.toLocaleString() }}</strong>
-            </p>
+          <CardContent class="pt-0 text-sm grid grid-cols-2 gap-x-4 gap-y-1">
+            <div class="flex justify-between col-span-2">
+              <span class="text-muted-foreground/80">ポイント</span
+              ><strong>{{ plan.points.toLocaleString() }} pt</strong>
+            </div>
+            <div class="flex justify-between col-span-2">
+              <span class="text-muted-foreground/80">価格</span
+              ><strong>\{{ plan.price.toLocaleString() }}</strong>
+            </div>
+            <div class="flex justify-between col-span-2">
+              <span class="text-muted-foreground/80">1pt あたり</span
+              ><strong>{{ (plan.price / plan.points).toFixed(2) }} 円</strong>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card class="bg-card/70 backdrop-blur-sm">
           <CardHeader class="pb-2">
-            <CardTitle class="text-base">PayPal アカウント</CardTitle>
+            <CardTitle class="text-base flex items-center gap-2">
+              <span
+                class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-br from-[#253B80] to-[#179BD7] text-white text-[11px] font-bold"
+                >P</span
+              >
+              PayPal アカウント
+            </CardTitle>
           </CardHeader>
-          <CardContent class="space-y-4 pt-0">
+          <CardContent class="space-y-5 pt-0">
             <div
               class="text-[11px] rounded-md border border-amber-300/60 bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-100 px-3 py-2 leading-relaxed flex gap-2"
             >
               <span class="mt-0.5 inline-block select-none">☑️</span>
-              <span>
-                ログインID /
-                パスワードは任意の値を入力することで購入操作が完了します。
-              </span>
+              <span>実在のID/パスワードを入力しないでください。</span>
             </div>
             <div class="space-y-1">
               <label class="text-xs font-medium">ログインID (メール)</label>
@@ -111,7 +139,7 @@ const cancel = () => {
                 v-model="email"
                 type="text"
                 placeholder="auction@example.com"
-                class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full rounded-md border bg-background/70 backdrop-blur px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div class="space-y-1">
@@ -120,7 +148,7 @@ const cancel = () => {
                 v-model="password"
                 type="text"
                 placeholder="password"
-                class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full rounded-md border bg-background/70 backdrop-blur px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <p v-if="error" class="text-xs text-destructive">{{ error }}</p>
@@ -129,7 +157,12 @@ const cancel = () => {
               class="w-full"
               @click="performDepositAndPurchase"
             >
-              <span v-if="!submitting">PayPalにログインして購入する</span>
+              <span v-if="!submitting" class="flex items-center gap-2">
+                <span
+                  class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
+                ></span>
+                PayPalにログインして購入する
+              </span>
               <span v-else class="flex items-center gap-2">
                 <span
                   class="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full"
