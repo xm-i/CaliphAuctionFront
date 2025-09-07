@@ -1,110 +1,13 @@
 <script lang="ts" setup>
-import AuctionItemCard from "@/components/AuctionItemCard.vue";
-import type { SearchItemDto } from "@/api/auction";
-import { ref, onMounted, onUnmounted } from "vue";
-import { searchAuctions, getAuctionItem, AuctionStatus } from "@/api/auction";
-import {
-  auctionHub,
-  type BidUpdateDto,
-  type AuctionClosedDto,
-} from "@/realtime/auctionHub";
-
-const items = ref<SearchItemDto[]>([]);
-const loading = ref(false);
-const error = ref<string | null>(null);
-
-async function fetchItems() {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await searchAuctions();
-    items.value = res.items;
-    const ids = items.value.map((x) => x.id);
-    await auctionHub.setVisibleItems(ids);
-  } catch (e: any) {
-    error.value = "取得に失敗しました";
-  } finally {
-    loading.value = false;
-  }
-}
-
-let unbindUpdate: (() => void) | null = null;
-let unbindClosed: (() => void) | null = null;
-
-onMounted(async () => {
-  await fetchItems();
-  unbindUpdate = auctionHub.onBidUpdate((dto: BidUpdateDto) => {
-    const index = items.value.findIndex((x) => x.id === dto.auctionItemId);
-    if (index >= 0) {
-      const updated = { ...items.value[index] };
-      updated.currentPrice = dto.currentPrice;
-      updated.endTime = new Date(dto.endTime);
-      updated.currentHighestBidUserId = dto.currentHighestBidUserId;
-      updated.currentHighestBidUserName = dto.currentHighestBidUserName;
-      items.value.splice(index, 1, updated);
-    }
-  });
-
-  unbindClosed = auctionHub.onAuctionClosed(
-    async (closed: AuctionClosedDto) => {
-      const index = items.value.findIndex((x) => x.id === closed.auctionItemId);
-      if (index >= 0 && items.value[index]?.status === AuctionStatus.Ended) {
-        return;
-      }
-      await refreshItem(closed.auctionItemId);
-    }
-  );
-});
-
-onUnmounted(() => {
-  if (unbindUpdate) {
-    unbindUpdate();
-  }
-  if (unbindClosed) {
-    unbindClosed();
-  }
-});
-
-async function refreshItem(id: number) {
-  const index = items.value.findIndex((x) => x.id === id);
-  if (index >= 0) {
-    const fresh = await getAuctionItem(id);
-    const updated = { ...items.value[index] };
-    updated.currentPrice = fresh.currentPrice;
-    updated.endTime = fresh.endTime;
-    updated.currentHighestBidUserId = fresh.currentHighestBidUserId;
-    updated.currentHighestBidUserName = fresh.currentHighestBidUserName;
-    (updated as any).status = (fresh as any).status ?? updated.status;
-    items.value.splice(index, 1, updated);
-  }
-}
+import AuctionItemRealtimeGrid from "@/components/AuctionItemRealtimeGrid.vue";
 </script>
 
 <template>
   <div class="home">
     <section class="container lg:w-[90%] space-y-4">
-      <div v-if="loading" class="text-center text-muted-foreground">
-        読み込み中...
-      </div>
-      <div v-else-if="error" class="text-center text-red-600">{{ error }}</div>
-      <div v-else>
-        <div
-          class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
-        >
-          <AuctionItemCard
-            v-for="item in items"
-            :key="item.id"
-            :item="item"
-            @refresh="refreshItem"
-          />
-        </div>
-        <div
-          v-if="!items.length"
-          class="text-center text-muted-foreground py-8"
-        >
-          商品が見つかりませんでした
-        </div>
-      </div>
+      <AuctionItemRealtimeGrid
+        empty-message="現在出品されている商品はありません"
+      />
     </section>
   </div>
 </template>

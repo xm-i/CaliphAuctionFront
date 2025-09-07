@@ -10,6 +10,8 @@ import {
   getBiddingItems,
 } from "@/api/me";
 import type { SearchItemDto } from "@/api/auction";
+import AuctionItemCard from "@/components/AuctionItemCard.vue";
+import AuctionItemRealtimeGrid from "@/components/AuctionItemRealtimeGrid.vue";
 
 // API 取得データ
 const news = ref<NotificationDto[]>([]);
@@ -19,7 +21,6 @@ const loading = ref<boolean>(false);
 const error = ref<string | null>(null);
 
 const wonItems = ref<SearchItemDto[]>([]);
-const biddingItems = ref<SearchItemDto[]>([]);
 const loadingItems = ref(false);
 const itemsError = ref<string | null>(null);
 
@@ -55,27 +56,28 @@ const fetchSummary = async () => {
   }
 };
 
-// 落札/入札中アイテム取得
-const fetchMyPageItems = async () => {
+const fetchWonItems = async () => {
   loadingItems.value = true;
   itemsError.value = null;
   try {
-    const [won, bidding] = await Promise.all([
-      getWonItems(5),
-      getBiddingItems(5),
-    ]);
+    const won = await getWonItems(6);
     wonItems.value = won.items;
-    biddingItems.value = bidding.items;
-  } catch (e: any) {
+  } catch {
     itemsError.value = "アイテム取得に失敗しました";
   } finally {
     loadingItems.value = false;
   }
 };
 
+// Realtime グリッド用 入札中一覧取得関数
+const fetchBiddingItems = async () => {
+  const res = await getBiddingItems(6);
+  return res;
+};
+
 onMounted(() => {
   fetchSummary();
-  fetchMyPageItems();
+  fetchWonItems();
 });
 
 const openChargeWindow = () => {
@@ -180,7 +182,7 @@ const openChargeWindow = () => {
 
     <Separator />
 
-    <!-- 落札商品（5件） -->
+    <!-- 落札商品 -->
     <div class="space-y-3">
       <div class="flex justify-between items-center">
         <h2 class="font-semibold">落札商品</h2>
@@ -188,21 +190,26 @@ const openChargeWindow = () => {
           >もっと見る</router-link
         >
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6"
+      >
+        <AuctionItemCard v-for="w in wonItems" :key="w.id" :item="w" />
         <div
-          v-for="w in wonItems.slice(0, 5)"
-          :key="w.id"
-          class="rounded-md border p-3 bg-card"
+          v-if="!wonItems.length && !loadingItems && !itemsError"
+          class="col-span-full text-sm text-muted-foreground py-4 text-center"
         >
-          <p class="font-medium line-clamp-1">{{ w.name }}</p>
-          <p class="text-sm text-muted-foreground">
-            ¥{{ w.currentPrice.toLocaleString() }}
-          </p>
+          落札商品はまだありません。
+        </div>
+        <div
+          v-if="itemsError"
+          class="col-span-full text-sm text-red-500 py-4 text-center"
+        >
+          {{ itemsError }}
         </div>
       </div>
     </div>
 
-    <!-- 入札中（5件） -->
+    <!-- 入札中 -->
     <div class="space-y-3">
       <div class="flex justify-between items-center">
         <h2 class="font-semibold">入札中</h2>
@@ -212,18 +219,10 @@ const openChargeWindow = () => {
           >もっと見る</router-link
         >
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div
-          v-for="b in biddingItems.slice(0, 5)"
-          :key="b.id"
-          class="rounded-md border p-3 bg-card"
-        >
-          <p class="font-medium line-clamp-1">{{ b.name }}</p>
-          <p class="text-sm text-muted-foreground">
-            現在 ¥{{ b.currentPrice.toLocaleString() }}
-          </p>
-        </div>
-      </div>
+      <AuctionItemRealtimeGrid
+        :fetch-fn="fetchBiddingItems"
+        :empty-message="'現在入札中の商品はありません。'"
+      />
     </div>
   </section>
 </template>
