@@ -36,6 +36,58 @@ export async function createPaypalDeposit(
   return data;
 }
 
+// --- Bank Transfer ---
+export interface BankTransferDepositRequest {
+  bankName: string;
+  branchName: string;
+  accountNumber: string;
+  accountHolder: string;
+  amount: number;
+}
+
+export async function createBankTransferDeposit(
+  payload: BankTransferDepositRequest
+): Promise<DepositResponse> {
+  const { data } = await api.post<DepositResponse>(
+    "/external/bank-transfer/deposit",
+    {
+      bankName: payload.bankName,
+      branchName: payload.branchName,
+      accountNumber: payload.accountNumber,
+      accountHolder: payload.accountHolder,
+      Amount: payload.amount,
+    }
+  );
+  return data;
+}
+
+// --- Credit Card ---
+export interface CreditCardDepositRequest {
+  cardNumber: string;
+  cardHolder: string;
+  expiryMonth: string; // "01"-"12"
+  expiryYear: string; // YY format
+  cvv: string;
+  amount: number;
+}
+
+export async function createCreditCardDeposit(
+  payload: CreditCardDepositRequest
+): Promise<DepositResponse> {
+  const { data } = await api.post<DepositResponse>(
+    "/external/credit-card/deposit",
+    {
+      cardNumber: payload.cardNumber,
+      cardHolder: payload.cardHolder,
+      expiryMonth: payload.expiryMonth,
+      expiryYear: payload.expiryYear,
+      cvv: payload.cvv,
+      Amount: payload.amount,
+    }
+  );
+  return data;
+}
+
 export interface PurchasePointsRequest {
   depositToken: string;
   pointPlanId: number;

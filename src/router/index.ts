@@ -78,6 +78,33 @@ const routes: Array<RouteRecordRaw> = [
       ),
   },
   {
+    path: "/points/method",
+    name: "points-method",
+    meta: { requiresAuth: true, blankLayout: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "points-method" */ "../views/points/SelectPaymentMethodView.vue"
+      ),
+  },
+  {
+    path: "/points/credit-card",
+    name: "points-credit-card",
+    meta: { requiresAuth: true, blankLayout: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "points-credit-card" */ "../views/points/CreditCardDepositView.vue"
+      ),
+  },
+  {
+    path: "/points/bank-transfer",
+    name: "points-bank-transfer",
+    meta: { requiresAuth: true, blankLayout: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "points-bank-transfer" */ "../views/points/BankTransferDepositView.vue"
+      ),
+  },
+  {
     path: "/points/complete",
     name: "points-complete",
     meta: { requiresAuth: true, blankLayout: true },

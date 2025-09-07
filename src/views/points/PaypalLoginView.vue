@@ -58,8 +58,7 @@ const performDepositAndPurchase = async () => {
 };
 
 const cancel = () => {
-  store.clearSelection();
-  router.replace({ name: "mypage-charge" });
+  router.replace({ name: "points-method" });
 };
 </script>
 

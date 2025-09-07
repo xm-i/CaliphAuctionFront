@@ -50,7 +50,7 @@ const proceed = () => {
   const plan = plans.value.find((p) => p.id === selecting.value);
   if (!plan) return;
   store.selectPlan(plan);
-  router.push({ name: "points-paypal-login" });
+  router.push({ name: "points-method" });
 };
 </script>
 
@@ -138,10 +138,13 @@ const proceed = () => {
         <div
           class="pt-4 border-t text-xs leading-relaxed text-muted-foreground space-y-2"
         >
-          <p>決済は後で実装予定です。現時点ではダミー選択のみ行えます。</p>
           <p>
-            このウィンドウはポップアップとして開かれている場合「閉じる」で閉じます。
+            ご購入いただいたポイントは即時反映され、入札やサービス利用にお使いいただけます。
           </p>
+          <p>
+            購入後の返金・キャンセルは承れませんので、金額をよくご確認ください。
+          </p>
+          <p>不明点がある場合は、購入前にサポートまでお問い合わせください。</p>
         </div>
       </div>
     </main>
