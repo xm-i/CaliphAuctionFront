@@ -140,15 +140,18 @@ const visibleRouteList = computed(() => {
     :class="{
       'shadow-light': mode === 'light',
       'shadow-dark': mode === 'dark',
-      'w-[90%] md:w-[70%] lg:w-[75%] lg:max-w-screen-xl top-5 mx-auto sticky border z-40 rounded-2xl flex justify-between items-center p-2 bg-card shadow-md': true,
+      'w-[92%] md:w-[78%] lg:w-[76%] xl:max-w-screen-xl top-4 mx-auto sticky z-40 flex justify-between items-center px-4 py-2 rounded-2xl glass elevation-1 soft-transition': true,
     }"
   >
-    <a href="/" class="font-bold text-lg flex items-center">
+    <a href="/" class="font-bold text-lg flex items-center group">
       <ChevronsDown
-        class="bg-gradient-to-tr from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white"
+        class="bg-gradient-to-tr from-primary via-accent to-primary rounded-xl w-9 h-9 mr-2 border border-border/40 text-white shadow-inner shadow-primary/30 group-hover:rotate-12 transition-transform duration-300"
       />
-      オークション</a
-    >
+      <span
+        class="text-gradient-primary tracking-tight group-hover:opacity-90 transition-opacity"
+        >オークション</span
+      >
+    </a>
     <!-- Mobile -->
     <div class="flex items-center lg:hidden">
       <Sheet v-model:open="isOpen">
@@ -244,15 +247,17 @@ const visibleRouteList = computed(() => {
     <NavigationMenu class="hidden lg:block" :key="navMenuKey">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger class="bg-card text-base">
+          <NavigationMenuTrigger
+            class="bg-transparent text-sm font-medium hover:bg-secondary/60 transition-colors rounded-md px-3 py-2"
+          >
             すべてのカテゴリ
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div class="grid w-[600px] grid-cols-2 gap-5 p-4">
-              <ul class="flex flex-col gap-2">
+            <div class="grid w-[640px] grid-cols-2 gap-6 p-5 card-surface">
+              <ul class="flex flex-col gap-1">
                 <li
                   v-if="loadingCategories"
-                  class="p-3 text-sm text-muted-foreground"
+                  class="p-3 text-sm text-muted-foreground animate-pulse"
                 >
                   読み込み中...
                 </li>
@@ -263,13 +268,17 @@ const visibleRouteList = computed(() => {
                   v-else
                   v-for="{ to, name, description } in categoryList"
                   :key="name"
-                  class="rounded-md p-3 text-sm hover:bg-muted"
+                  class="rounded-lg p-3 text-sm hover:bg-secondary/60 hover-raise soft-transition border border-transparent hover:border-border/60"
                 >
                   <router-link :to="to" @click="closeDesktopMenu">
-                    <p class="mb-1 font-semibold leading-none text-foreground">
+                    <p
+                      class="mb-1 font-semibold leading-none text-foreground/90"
+                    >
                       {{ name }}
                     </p>
-                    <p class="line-clamp-2 text-muted-foreground">
+                    <p
+                      class="line-clamp-2 text-muted-foreground text-xs leading-snug"
+                    >
                       {{ description }}
                     </p>
                   </router-link>
@@ -277,8 +286,8 @@ const visibleRouteList = computed(() => {
               </ul>
               <img
                 src="https://www.radix-vue.com/logo.svg"
-                alt="Beach"
-                class="h-full w-full rounded-md object-cover"
+                alt="Preview"
+                class="h-full w-full rounded-xl object-cover ring-1 ring-border/60 shadow-md"
               />
             </div>
           </NavigationMenuContent>
@@ -290,7 +299,7 @@ const visibleRouteList = computed(() => {
               :key="label"
               as-child
               variant="ghost"
-              class="justify-start text-base"
+              class="justify-start text-sm font-medium soft-transition hover:bg-secondary/60"
             >
               <router-link :to="to" @click="closeDesktopMenu">{{
                 label
@@ -302,9 +311,11 @@ const visibleRouteList = computed(() => {
     </NavigationMenu>
 
     <div class="hidden lg:flex">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <template v-if="isAuthenticated">
-          <span class="text-sm text-muted-foreground">
+          <span
+            class="text-xs tracking-wide text-muted-foreground bg-secondary/60 px-2 py-1 rounded-md"
+          >
             {{ user?.username }}
           </span>
           <Separator orientation="vertical" class="h-5" />
@@ -312,7 +323,13 @@ const visibleRouteList = computed(() => {
       </div>
       <ToggleTheme />
 
-      <Button as-child size="sm" variant="ghost" aria-label="View on GitHub">
+      <Button
+        as-child
+        size="sm"
+        variant="ghost"
+        aria-label="View on GitHub"
+        class="soft-transition hover:bg-secondary/60"
+      >
         <a
           aria-label="View on GitHub"
           href="https://github.com/southernwind/PennyAuctionFront"
