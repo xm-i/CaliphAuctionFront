@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { numberWithComma } from "@/lib/utils";
 import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
@@ -9,6 +8,8 @@ import { placeBid, AuctionStatus } from "@/api/auction";
 const props = defineProps<{
   auctionItemId: number;
   currentPrice: number;
+  bidIncrement: number;
+  bidPointCost: number;
   disabled?: boolean;
   highestBidUserId: number | null;
   loading: boolean;
@@ -18,7 +19,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "placed"): void;
   (e: "error", message: string): void;
-  (e: "onBeaforeClick"): void; // (typo intentional per request)
+  (e: "onBeaforeClick"): void;
 }>();
 
 const placing = ref(false);
@@ -26,7 +27,7 @@ const router = useRouter();
 const route = useRoute();
 const { isAuthenticated, user } = useAuth();
 
-const nextAmount = computed(() => props.currentPrice + 1);
+const nextAmount = computed(() => props.currentPrice + props.bidIncrement);
 const isSelfHighest = computed(
   () =>
     user.value?.id != null &&
@@ -61,9 +62,6 @@ async function onClick() {
 
 <template>
   <div class="flex flex-col items-center gap-2">
-    <div class="text-sm text-muted-foreground">
-      次の入札額: ¥{{ numberWithComma(nextAmount) }}
-    </div>
     <Button v-if="status === AuctionStatus.Ended" size="lg" disabled>
       終了
     </Button>
@@ -81,7 +79,7 @@ async function onClick() {
     </Button>
     <Button v-else-if="placing" size="lg" disabled> 処理中... </Button>
     <Button v-else size="lg" :disabled="disabled" @click="onClick">
-      入札
+      +\{{ bidIncrement }}で入札 <br />(🪙{{ bidPointCost }}消費)
     </Button>
     <p v-if="isSelfHighest" class="text-xs text-muted-foreground">
       あなたが最高入札者です

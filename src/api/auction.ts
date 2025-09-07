@@ -11,6 +11,8 @@ export type SearchItemDto = {
   name: string;
   thumbnailImageUrl: string;
   currentPrice: number;
+  bidIncrement: number;
+  bidPointCost: number;
   endTime: Date;
   categoryId: number;
   status: AuctionStatus;
@@ -54,6 +56,8 @@ export type AuctionDetailDto = {
   originalPrice: number;
   startingBid: number;
   currentPrice: number;
+  bidIncrement: number;
+  bidPointCost: number;
   endTime: Date;
   categoryId: number;
   categoryName: string;

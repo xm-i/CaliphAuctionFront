@@ -103,6 +103,8 @@ watch(
       <PlaceBidButton
         :auction-item-id="props.item.id"
         :current-price="props.item.currentPrice"
+        :bid-increment="props.item.bidIncrement"
+        :bid-point-cost="props.item.bidPointCost"
         :highest-bid-user-id="props.item.currentHighestBidUserId"
         :loading="refreshing"
         :status="props.item.status"

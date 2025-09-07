@@ -134,6 +134,8 @@ function formatBidTime(d: Date | string) {
             v-if="item"
             :auction-item-id="item.id"
             :current-price="item.currentPrice"
+            :bid-increment="item.bidIncrement"
+            :bid-point-cost="item.bidPointCost"
             :highest-bid-user-id="item.currentHighestBidUserId"
             :loading="refreshing"
             :status="item.status"
