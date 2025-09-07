@@ -32,7 +32,7 @@ export async function searchAuctions(): Promise<SearchResponse> {
 export type BidHistoryDto = {
   id: number;
   userId?: string;
-  userName: string;
+  username: string;
   bidAmount: number;
   bidTime: Date;
 };

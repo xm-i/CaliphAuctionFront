@@ -18,6 +18,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "placed"): void;
   (e: "error", message: string): void;
+  (e: "onBeaforeClick"): void; // (typo intentional per request)
 }>();
 
 const placing = ref(false);
@@ -41,6 +42,7 @@ async function onClick() {
   if (props.loading || props.disabled || placing.value || isSelfHighest.value) {
     return;
   }
+  emit("onBeaforeClick");
   placing.value = true;
   try {
     await placeBid({

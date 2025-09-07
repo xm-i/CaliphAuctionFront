@@ -38,9 +38,9 @@ onMounted(async () => {
     item.value.currentHighestBidUserName = u.currentHighestBidUserName;
     item.value.bidCount++;
 
-    item.value.bidHistories.push({
+    item.value.bidHistories.unshift({
       id: u.bidId,
-      userName: u.currentHighestBidUserName,
+      username: u.currentHighestBidUserName,
       bidAmount: u.currentPrice,
       bidTime: new Date(u.bidTime),
     });
@@ -88,6 +88,11 @@ async function onTimerFinished() {
     refreshing.value = false;
   }
 }
+
+function formatBidTime(d: Date | string) {
+  const date = d instanceof Date ? d : new Date(d);
+  return date.toLocaleString("ja-JP", { hour12: false });
+}
 </script>
 
 <template>
@@ -134,6 +139,7 @@ async function onTimerFinished() {
             :status="item.status"
             @placed="refreshDetail"
             @error="(m:string)=> (errorMessage = m)"
+            @onBeaforeClick="errorMessage = null"
           />
           <p v-if="errorMessage" class="text-red-600 text-sm">
             {{ errorMessage }}
@@ -143,12 +149,29 @@ async function onTimerFinished() {
       <div class="lg:col-span-2">
         <h2 class="text-xl font-semibold mb-4">入札履歴</h2>
         <Separator class="mb-4" />
-        <ul class="space-y-2">
-          <li v-for="bid in item.bidHistories" :key="bid.id">
-            <div class="flex justify-between">
-              <span>{{ bid.userName }}</span>
-              <span>¥{{ numberWithComma(bid.bidAmount) }}</span>
+        <ul class="space-y-2 overflow-y-auto max-h-80 pr-1 custom-scrollbar">
+          <li
+            v-for="bid in item.bidHistories"
+            :key="bid.id"
+            class="flex items-center justify-between text-sm border-b last:border-b-0 pb-1"
+          >
+            <div class="flex flex-col">
+              <span class="font-medium">{{ bid.username }}</span>
+              <span class="text-xs text-muted-foreground">{{
+                formatBidTime(bid.bidTime)
+              }}</span>
             </div>
+            <div class="text-right">
+              <span class="font-semibold"
+                >¥{{ numberWithComma(bid.bidAmount) }}</span
+              >
+            </div>
+          </li>
+          <li
+            v-if="!item.bidHistories.length"
+            class="text-muted-foreground text-sm"
+          >
+            まだ入札はありません。
           </li>
         </ul>
       </div>
