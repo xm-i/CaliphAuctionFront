@@ -26,9 +26,6 @@ const isHighest = computed(
 
 const isEnded = computed(() => props.item.status === AuctionStatus.Ended);
 
-const bidIncrementText = computed(() =>
-  props.item.bidIncrement ? `+${props.item.bidIncrement}` : null
-);
 const emit = defineEmits<{ (e: "refresh", id: number): void }>();
 
 function onFinished() {
@@ -132,11 +129,6 @@ watch(
               >▲</span
             >
           </span>
-          <span
-            v-if="bidIncrementText"
-            class="ml-1 text-[10px] font-normal text-muted-foreground/70"
-            >({{ bidIncrementText }})</span
-          >
         </div>
         <div
           v-if="item.currentHighestBidUserName"
