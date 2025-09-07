@@ -25,8 +25,8 @@ onMounted(() => {
 const canSubmit = computed(
   () =>
     !!plan.value &&
-    email.value.length > 3 &&
-    password.value.length > 3 &&
+    email.value.length >= 1 &&
+    password.value.length >= 1 &&
     !submitting.value
 );
 
@@ -110,7 +110,7 @@ const cancel = () => {
               <label class="text-xs font-medium">ログインID (メール)</label>
               <input
                 v-model="email"
-                type="email"
+                type="text"
                 placeholder="auction@example.com"
                 class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
@@ -119,7 +119,7 @@ const cancel = () => {
               <label class="text-xs font-medium">パスワード</label>
               <input
                 v-model="password"
-                type="password"
+                type="text"
                 placeholder="password"
                 class="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
