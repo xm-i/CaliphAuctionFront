@@ -12,6 +12,7 @@ import {
 import type { SearchItemDto } from "@/api/auction";
 import AuctionItemCard from "@/components/AuctionItemCard.vue";
 import AuctionItemRealtimeGrid from "@/components/AuctionItemRealtimeGrid.vue";
+import { usePointsBalanceStore } from "@/stores/pointsBalance";
 
 // API 取得データ
 const news = ref<NotificationDto[]>([]);
@@ -23,6 +24,7 @@ const error = ref<string | null>(null);
 const wonItems = ref<SearchItemDto[]>([]);
 const loadingItems = ref(false);
 const itemsError = ref<string | null>(null);
+const pointsBalanceStore = usePointsBalanceStore();
 
 // ポイント購入画面をポップアップで開く
 const router = useRouter();
@@ -49,6 +51,7 @@ const fetchSummary = async () => {
     points.value = data.pointBalance;
     totalSpent.value = data.totalSpentAmount;
     news.value = data.notifications;
+    pointsBalanceStore.setBalance(data.pointBalance);
   } catch (e: any) {
     error.value = "サマリー取得に失敗しました";
   } finally {
@@ -131,9 +134,9 @@ const openChargeWindow = () => {
   <section class="container lg:w-[90%] space-y-6 py-6">
     <h1 class="text-3xl font-bold">マイページ</h1>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
       <!-- 所持ポイント / 利用金額合計 -->
-      <div class="col-span-1 space-y-4">
+      <div class="col-span-1 space-y-4 flex flex-col h-full">
         <div class="rounded-lg border p-4 bg-card">
           <h2 class="font-semibold mb-2">所持ポイント</h2>
           <p class="text-2xl">{{ points.toLocaleString() }} pt</p>
@@ -148,7 +151,9 @@ const openChargeWindow = () => {
       </div>
 
       <!-- 新着情報 -->
-      <div class="col-span-2 rounded-lg border p-4 bg-card">
+      <div
+        class="col-span-2 rounded-lg border p-4 bg-card flex flex-col max-h-72"
+      >
         <h2 class="font-semibold mb-3">新着情報</h2>
         <div v-if="loading" class="text-sm text-muted-foreground py-2">
           読み込み中...
@@ -156,25 +161,42 @@ const openChargeWindow = () => {
         <div v-else-if="error" class="text-sm text-red-500 py-2">
           {{ error }}
         </div>
-        <ul v-else class="space-y-2">
+        <ul v-else class="space-y-2 overflow-y-auto pr-1 flex-1 min-h-0">
           <li v-if="!news.length" class="text-sm text-muted-foreground py-1">
             新着情報はありません。
           </li>
           <li
             v-for="n in news"
             :key="n.id"
-            class="flex justify-between items-start gap-3"
+            class="flex flex-col gap-0.5 rounded border border-border/60 px-2 py-1.5 bg-background/50"
           >
-            <span
-              :class="['text-sm', n.isRead ? 'opacity-70' : 'font-semibold']"
+            <div class="flex items-start justify-between gap-2">
+              <span
+                :class="[
+                  'text-[13px]',
+                  n.isRead ? 'opacity-60' : 'font-medium',
+                ]"
+              >
+                {{ n.title }}
+              </span>
+              <span
+                class="text-muted-foreground text-[10px] whitespace-nowrap leading-4"
+              >
+                {{
+                  new Date(n.createdAt).toLocaleString("ja-JP", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                }}
+              </span>
+            </div>
+            <p
+              class="text-[11px] leading-snug text-muted-foreground whitespace-pre-line"
             >
-              {{ n.title }}
-            </span>
-            <span
-              class="text-muted-foreground text-xs whitespace-nowrap mt-0.5"
-            >
-              {{ n.createdAt.getDate() }}
-            </span>
+              {{ n.message }}
+            </p>
           </li>
         </ul>
       </div>

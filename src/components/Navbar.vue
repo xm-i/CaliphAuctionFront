@@ -26,6 +26,7 @@ import { ChevronsDown, Menu } from "lucide-vue-next";
 import GithubIcon from "@/icons/GithubIcon.vue";
 import ToggleTheme from "./ToggleTheme.vue";
 import { useAuth } from "@/composables/useAuth";
+import { usePointsBalanceStore } from "@/stores/pointsBalance";
 import { getCategories, type CategoryDto } from "@/api/auction";
 import { useRoute } from "vue-router";
 
@@ -100,6 +101,11 @@ const navMenuKey = ref(0);
 const mode = useColorMode();
 
 const { isAuthenticated, user } = useAuth();
+const pointsStore = usePointsBalanceStore();
+
+onMounted(() => {
+  pointsStore.updateBalanceFromApi();
+});
 
 onMounted(() => {
   loadCategories();
@@ -317,6 +323,22 @@ const visibleRouteList = computed(() => {
             class="text-xs tracking-wide text-muted-foreground bg-secondary/60 px-2 py-1 rounded-md"
           >
             {{ user?.username }}
+          </span>
+          <span
+            v-if="pointsStore.balance != null"
+            class="text-xs font-semibold tracking-wide bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1"
+          >
+            <span class="opacity-70 font-normal">🪙</span>
+            {{ pointsStore.balance!.toLocaleString() }}
+            <button
+              class="ml-1 text-[10px] px-1 py-0.5 rounded hover:bg-primary/20 soft-transition disabled:opacity-40"
+              :disabled="pointsStore.loading"
+              @click.stop="pointsStore.updateBalanceFromApi()"
+              title="残高更新"
+            >
+              <span v-if="!pointsStore.loading">⟳</span>
+              <span v-else class="inline-block animate-spin">⟳</span>
+            </button>
           </span>
           <Separator orientation="vertical" class="h-5" />
         </template>

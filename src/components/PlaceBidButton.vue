@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { placeBid, AuctionStatus } from "@/api/auction";
+import { usePointsBalanceStore } from "@/stores/pointsBalance";
 
 const props = defineProps<{
   auctionItemId: number;
@@ -25,6 +26,7 @@ const emit = defineEmits<{
 const placing = ref(false);
 const router = useRouter();
 const route = useRoute();
+const pointsBalanceStore = usePointsBalanceStore();
 const { isAuthenticated, user } = useAuth();
 
 const nextAmount = computed(() => props.currentPrice + props.bidIncrement);
@@ -51,6 +53,7 @@ async function onClick() {
       bidAmount: nextAmount.value,
     });
     emit("placed");
+    pointsBalanceStore.updateBalanceFromApi();
   } catch (e: any) {
     const message = "入札に失敗しました";
     emit("error", message);
