@@ -17,5 +17,6 @@ export function useAuth() {
     login,
     logout,
     updateAuthenticatedStatus,
+    ensureUserLoaded: store.ensureUserLoaded,
   };
 }
