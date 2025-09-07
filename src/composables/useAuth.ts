@@ -8,6 +8,7 @@ export function useAuth() {
   const login = (payload: LoginPayload) => store.login(payload);
   const logout = () => store.logout();
   const updateAuthenticatedStatus = () => store.updateAuthenticatedStatus();
+
   return {
     isAuthenticated,
     loading,
@@ -16,5 +17,6 @@ export function useAuth() {
     login,
     logout,
     updateAuthenticatedStatus,
+    ensureUserLoaded: store.ensureUserLoaded(),
   };
 }

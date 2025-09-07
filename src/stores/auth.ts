@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { login as loginApi, type LoginPayload, type User } from "@/api/auth";
+import {
+  login as loginApi,
+  getCurrentUser,
+  type LoginPayload,
+  type User,
+} from "@/api/auth";
 import { isJwtValid } from "@/lib/jwt";
 
 export const useAuthStore = defineStore("auth", () => {
@@ -24,6 +29,22 @@ export const useAuthStore = defineStore("auth", () => {
       throw e;
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function ensureUserLoaded() {
+    if (!isAuthenticated.value) {
+      return null;
+    }
+    if (user.value) {
+      return user.value;
+    }
+    try {
+      const me = await getCurrentUser();
+      user.value = me;
+      return me;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -56,5 +77,6 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     logout,
     updateAuthenticatedStatus,
+    ensureUserLoaded,
   };
 });

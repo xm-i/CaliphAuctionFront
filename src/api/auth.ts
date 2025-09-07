@@ -14,7 +14,6 @@ export function logout() {
   localStorage.removeItem("auth_token");
 }
 
-// Registration
 export type RegisterPayload = {
   email: string;
   password: string;
@@ -26,5 +25,10 @@ export async function register(
   payload: RegisterPayload
 ): Promise<RegisterResponse> {
   const { data } = await api.post<RegisterResponse>("/users/register", payload);
+  return data;
+}
+
+export async function getCurrentUser(): Promise<User> {
+  const { data } = await api.get<User>("/users/me");
   return data;
 }
