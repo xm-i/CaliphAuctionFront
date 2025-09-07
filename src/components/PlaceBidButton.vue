@@ -30,6 +30,12 @@ const pointsBalanceStore = usePointsBalanceStore();
 const { isAuthenticated, user } = useAuth();
 
 const nextAmount = computed(() => props.currentPrice + props.bidIncrement);
+const insufficientBalance = computed(() => {
+  if (pointsBalanceStore.balance == null) {
+    return false;
+  }
+  return pointsBalanceStore.balance < props.bidPointCost;
+});
 const isSelfHighest = computed(
   () =>
     user.value?.id != null &&
@@ -42,7 +48,13 @@ async function onClick() {
     router.push({ name: "signin", query: { redirect: route.fullPath } });
     return;
   }
-  if (props.loading || props.disabled || placing.value || isSelfHighest.value) {
+  if (
+    props.loading ||
+    props.disabled ||
+    placing.value ||
+    isSelfHighest.value ||
+    insufficientBalance.value
+  ) {
     return;
   }
   emit("onBeaforeClick");
@@ -81,11 +93,26 @@ async function onClick() {
       最高入札者です
     </Button>
     <Button v-else-if="placing" size="lg" disabled> 処理中... </Button>
-    <Button v-else size="lg" :disabled="disabled" @click="onClick">
-      +\{{ bidIncrement }}で入札 <br />(🪙{{ bidPointCost }}消費)
+    <Button
+      v-else-if="insufficientBalance"
+      size="lg"
+      disabled
+      variant="secondary"
+    >
+      残高不足 (必要: 🪙{{ bidPointCost.toLocaleString() }})
     </Button>
-    <p v-if="isSelfHighest" class="text-xs text-muted-foreground">
-      あなたが最高入札者です
+    <Button v-else size="lg" :disabled="disabled" @click="onClick">
+      +\{{ bidIncrement }}で入札 <br />(🪙{{
+        bidPointCost.toLocaleString()
+      }}消費)
+    </Button>
+    <p
+      v-if="insufficientBalance"
+      class="text-xs text-destructive flex items-center gap-1"
+    >
+      残高: 🪙{{ pointsBalanceStore.balance?.toLocaleString() }} / 必要: 🪙{{
+        bidPointCost.toLocaleString()
+      }}
     </p>
   </div>
 </template>
