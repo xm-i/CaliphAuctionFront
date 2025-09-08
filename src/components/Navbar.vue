@@ -139,6 +139,10 @@ const visibleRouteList = computed(() => {
     return true;
   });
 });
+
+function isActive(path: string) {
+  return route.path === path;
+}
 </script>
 
 <template>
@@ -254,7 +258,7 @@ const visibleRouteList = computed(() => {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            class="bg-transparent text-sm font-medium hover:bg-secondary/60 transition-colors rounded-md px-3 py-2"
+            class="text-sm font-medium rounded-md px-3 py-2 soft-transition relative text-slate-700 dark:text-foreground hover:text-slate-900 dark:hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 after:absolute after:left-2 after:right-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary after:origin-center after:scale-x-0 hover:after:scale-x-100 data-[state=open]:after:scale-x-100 after:transition-transform after:duration-300 after:ease-out"
           >
             すべてのカテゴリ
           </NavigationMenuTrigger>
@@ -274,7 +278,7 @@ const visibleRouteList = computed(() => {
                   v-else
                   v-for="{ to, name, description } in categoryList"
                   :key="name"
-                  class="rounded-lg p-3 text-sm hover:bg-secondary/60 hover-raise soft-transition border border-transparent hover:border-border/60"
+                  class="rounded-lg p-3 text-sm soft-transition hover-raise border border-transparent hover:border-border/60 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   <router-link :to="to" @click="closeDesktopMenu">
                     <p
@@ -305,7 +309,13 @@ const visibleRouteList = computed(() => {
               :key="label"
               as-child
               variant="ghost"
-              class="justify-start text-sm font-medium soft-transition hover:bg-secondary/60"
+              :class="[
+                'justify-start text-sm font-medium soft-transition relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 overflow-hidden hover:bg-transparent active:bg-transparent focus:bg-transparent',
+                'after:absolute after:left-2 after:right-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary after:origin-center after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300',
+                isActive(to)
+                  ? 'text-slate-900 dark:text-foreground hover:text-slate-900 dark:hover:text-foreground after:scale-x-100 after:opacity-100'
+                  : 'text-slate-600 dark:text-foreground/80 hover:text-slate-900 dark:hover:text-foreground after:opacity-90',
+              ]"
             >
               <router-link :to="to" @click="closeDesktopMenu">{{
                 label
@@ -350,7 +360,7 @@ const visibleRouteList = computed(() => {
         size="sm"
         variant="ghost"
         aria-label="View on GitHub"
-        class="soft-transition hover:bg-secondary/60"
+        class="soft-transition hover:bg-primary/15 dark:hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
       >
         <a
           aria-label="View on GitHub"
