@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { numberWithComma } from "@/lib/utils";
+import { numberWithComma } from "@/utils";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";

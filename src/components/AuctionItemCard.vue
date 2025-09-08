@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SearchItemDto } from "@/api/auction";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { numberWithComma } from "@/lib/utils";
+import { numberWithComma } from "@/utils";
 import PlaceBidButton from "@/components/PlaceBidButton.vue";
 import CountdownTimer from "@/components/CountdownTimer.vue";
 import { ref, watch, computed } from "vue";
