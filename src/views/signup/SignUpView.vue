@@ -8,6 +8,7 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
 import { register } from "@/api/auth";
+import { RouterLink } from "vue-router";
 
 const router = useRouter();
 
@@ -25,6 +26,9 @@ const schema = toTypedSchema(
         .string()
         .min(3, { message: "3文字以上で入力してください" })
         .max(50, { message: "50文字以下で入力してください" }),
+      termsAccepted: z
+        .boolean()
+        .refine((v) => v === true, { message: "利用規約に同意してください" }),
     })
     .refine((d) => d.password === d.passwordConfirm, {
       message: "パスワードが一致しません",
@@ -34,13 +38,20 @@ const schema = toTypedSchema(
 
 const { defineField, handleSubmit, errors, meta, isSubmitting } = useForm({
   validationSchema: schema,
-  initialValues: { email: "", password: "", passwordConfirm: "", username: "" },
+  initialValues: {
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    username: "",
+    termsAccepted: false,
+  },
 });
 
 const [email, emailProps] = defineField("email");
 const [password, passwordProps] = defineField("password");
 const [passwordConfirm, passwordConfirmProps] = defineField("passwordConfirm");
 const [username, usernameProps] = defineField("username");
+const [termsAccepted, termsAcceptedProps] = defineField("termsAccepted");
 
 const onSubmit = handleSubmit(async (values) => {
   await register({
@@ -105,6 +116,35 @@ const onSubmit = handleSubmit(async (values) => {
           {{ errors.username }}
         </p>
       </div>
+      <div class="flex items-start gap-2">
+        <input
+          id="termsAccepted"
+          type="checkbox"
+          v-model="termsAccepted"
+          v-bind="termsAcceptedProps"
+          class="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          :aria-invalid="!!errors.termsAccepted"
+          :aria-describedby="errors.termsAccepted ? 'terms-error' : undefined"
+        />
+        <label for="termsAccepted" class="text-sm leading-snug select-none">
+          <span>
+            <RouterLink
+              to="/about/terms"
+              class="underline font-medium"
+              target="_blank"
+              >利用規約</RouterLink
+            >
+            を読み、内容に同意します</span
+          >
+        </label>
+      </div>
+      <p
+        v-if="errors.termsAccepted"
+        id="terms-error"
+        class="text-sm text-red-600 -mt-1"
+      >
+        {{ errors.termsAccepted }}
+      </p>
       <div class="flex justify-center">
         <Button type="submit" :disabled="isSubmitting || !meta.valid">
           <span v-if="isSubmitting">登録中...</span>
