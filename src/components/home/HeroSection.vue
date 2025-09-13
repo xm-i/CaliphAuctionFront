@@ -46,10 +46,10 @@ function goCharge() {
           >
         </div>
         <h1 class="text-3xl md:text-5xl font-bold leading-tight tracking-tight">
-          1ポイントで変わる一瞬の駆け引き
+          「あと1秒」が永遠に感じる
         </h1>
         <p class="text-lg text-muted-foreground max-w-prose">
-          ライブ感のあるペニーオークションで、欲しかった商品を低価格で手に入れるチャンス。<br
+          伸び続けるカウントダウンと読み合い。ライブ感のあるペニーオークションで、欲しかった商品を低価格で手に入れるチャンス。<br
             class="hidden md:block"
           />
           今すぐ参加して緊張と興奮のカウントダウンを体験しよう。
