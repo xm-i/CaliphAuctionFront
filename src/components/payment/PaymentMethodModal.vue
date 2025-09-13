@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { Button } from "@/components/ui/button";
 import type { DepositResponse } from "@/api/points";
 import PaypalPaymentForm from "./methods/PaypalPaymentForm.vue";
 import CreditCardPaymentForm from "./methods/CreditCardPaymentForm.vue";
@@ -51,22 +52,20 @@ function handleCompleted(deposit: DepositResponse) {
       >
         <div class="flex items-center justify-between">
           <h2 class="text-base font-semibold tracking-tight">決済方法の選択</h2>
-          <button
+          <Button
             v-if="step === 'select'"
-            type="button"
-            class="text-xs text-muted-foreground hover:text-foreground transition"
+            variant="link"
+            class="text-xs px-0 h-auto font-normal text-muted-foreground hover:text-foreground"
             @click="emit('close')"
+            >閉じる</Button
           >
-            閉じる
-          </button>
-          <button
+          <Button
             v-else
-            type="button"
-            class="text-xs text-muted-foreground hover:text-foreground transition"
+            variant="link"
+            class="text-xs px-0 h-auto font-normal text-muted-foreground hover:text-foreground"
             @click="backToSelect"
+            >戻る</Button
           >
-            戻る
-          </button>
         </div>
         <div class="space-y-2">
           <slot />
@@ -77,27 +76,15 @@ function handleCompleted(deposit: DepositResponse) {
             支払い方法を選択してください
           </div>
           <div class="grid sm:grid-cols-3 gap-3">
-            <button
-              type="button"
-              class="rounded-md border bg-background/60 px-3 py-2 text-sm hover:border-primary/50 hover:bg-background transition"
-              @click="step = 'paypal'"
+            <Button type="button" variant="secondary" @click="step = 'paypal'"
+              >PayPal</Button
             >
-              PayPal
-            </button>
-            <button
-              type="button"
-              class="rounded-md border bg-background/60 px-3 py-2 text-sm hover:border-primary/50 hover:bg-background transition"
-              @click="step = 'card'"
+            <Button type="button" variant="secondary" @click="step = 'card'"
+              >クレジットカード</Button
             >
-              クレジットカード
-            </button>
-            <button
-              type="button"
-              class="rounded-md border bg-background/60 px-3 py-2 text-sm hover:border-primary/50 hover:bg-background transition"
-              @click="step = 'bank'"
+            <Button type="button" variant="secondary" @click="step = 'bank'"
+              >銀行振込</Button
             >
-              銀行振込
-            </button>
           </div>
         </div>
 

@@ -223,7 +223,7 @@ async function onPaymentModalClosed() {
         <div class="pt-2">
           <Button
             size="sm"
-            variant="outline"
+            variant="secondary"
             @click="
               () =>
                 router.replace({
@@ -335,7 +335,7 @@ async function onPaymentModalClosed() {
             </span>
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             @click="
               () =>
                 router.replace({

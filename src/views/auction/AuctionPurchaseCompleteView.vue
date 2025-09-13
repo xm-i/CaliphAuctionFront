@@ -59,7 +59,7 @@ onMounted(async () => {
       </div>
       <div class="flex justify-center gap-3 pt-2">
         <Button
-          variant="outline"
+          variant="secondary"
           @click="
             () =>
               router.replace({

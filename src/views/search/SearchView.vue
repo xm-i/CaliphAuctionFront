@@ -88,7 +88,7 @@ if (categoryId.value) ensureCategories();
         <div class="flex gap-2 md:justify-end">
           <Button
             size="sm"
-            variant="outline"
+            variant="secondary"
             :disabled="loading"
             @click="gridRef?.reload()"
             >再読み込み</Button

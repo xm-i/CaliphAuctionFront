@@ -12,6 +12,7 @@ import {
 } from "@/api/auction";
 import CountdownTimer from "@/components/CountdownTimer.vue";
 import PlaceBidButton from "@/components/PlaceBidButton.vue";
+import { Button } from "@/components/ui/button";
 import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
 
 const route = useRoute();
@@ -174,9 +175,10 @@ function formatBidTime(d: Date | string) {
               >あなたが最高入札者です。購入手続きに進んでください。</template
             >
           </span>
-          <button
+          <Button
             v-if="isSelfHighest"
-            class="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 soft-transition"
+            size="sm"
+            class="text-xs px-3 py-1.5 font-medium hover:opacity-90 soft-transition"
             @click="
               $router.push({
                 name: 'auction-purchase',
@@ -185,7 +187,7 @@ function formatBidTime(d: Date | string) {
             "
           >
             購入手続きへ
-          </button>
+          </Button>
         </div>
         <div class="flex flex-wrap items-center gap-3">
           <h1 class="text-3xl font-bold tracking-tight flex items-center gap-3">

@@ -278,7 +278,7 @@ function isActive(path: string) {
                   v-else
                   v-for="{ to, name, description } in categoryList"
                   :key="name"
-                  class="rounded-lg p-3 text-sm soft-transition hover-raise border border-transparent hover:border-border/60 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  class="rounded-lg p-3 text-sm soft-transition hover-raise border border-transparent hover:border-border/60 hover:bg-muted/60 dark:hover:bg-muted/40 hover:text-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   <router-link :to="to" @click="closeDesktopMenu">
                     <p
@@ -340,15 +340,17 @@ function isActive(path: string) {
           >
             <span class="opacity-70 font-normal">🪙</span>
             {{ pointsStore.balance!.toLocaleString() }}
-            <button
-              class="ml-1 text-[10px] px-1 py-0.5 rounded hover:bg-primary/20 soft-transition disabled:opacity-40"
+            <Button
+              size="xs"
+              variant="ghost"
+              class="ml-1 text-[10px] h-auto px-1 py-0.5 rounded soft-transition disabled:opacity-40"
               :disabled="pointsStore.loading"
               @click.stop="pointsStore.updateBalanceFromApi()"
               title="残高更新"
             >
               <span v-if="!pointsStore.loading">⟳</span>
               <span v-else class="inline-block animate-spin">⟳</span>
-            </button>
+            </Button>
           </span>
           <Separator orientation="vertical" class="h-5" />
         </template>
@@ -360,7 +362,7 @@ function isActive(path: string) {
         size="sm"
         variant="ghost"
         aria-label="View on GitHub"
-        class="soft-transition hover:bg-primary/15 dark:hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        class="soft-transition hover:bg-muted/60 dark:hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
       >
         <a
           aria-label="View on GitHub"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { Button } from "@/components/ui/button";
 import { getWonItems } from "@/api/me";
 import type { SearchItemDto } from "@/api/auction";
 import WonItemMiniCard from "@/components/WonItemMiniCard.vue";
@@ -35,12 +36,12 @@ function goBack() {
     <header class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold tracking-tight">落札商品一覧</h1>
-        <button
-          class="text-sm text-primary hover:underline underline-offset-2"
+        <Button
+          variant="link"
+          class="text-sm px-0 h-auto font-normal underline-offset-2 hover:underline"
           @click="goBack"
+          >&larr; マイページへ戻る</Button
         >
-          &larr; マイページへ戻る
-        </button>
       </div>
       <p class="text-sm text-muted-foreground">
         過去に落札した商品です。履歴は最新順で表示します。

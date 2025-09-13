@@ -195,7 +195,7 @@ const formatDateTime = (d: string | Date) => {
       </div>
       <div class="flex gap-2">
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
           @click="refreshAll"
           :disabled="loadingSummary || loadingNotifications"

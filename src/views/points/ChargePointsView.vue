@@ -74,7 +74,6 @@ async function onPaymentCompleted(d: DepositResponse) {
   purchasing.value = true;
   purchaseError.value = null;
   try {
-    // 支払完了後、ユーザーに"購入処理中..."を少なくとも2秒間表示するための人工ウェイト
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const res = await purchasePoints({
       depositToken: d.depositToken,
@@ -83,7 +82,6 @@ async function onPaymentCompleted(d: DepositResponse) {
     store.setDeposit(d);
     store.setPurchaseResult(res);
     await balanceStore.updateBalanceFromApi();
-    // 完了ページへ遷移
     router.replace({ name: "points-complete" });
   } catch (e: any) {
     purchaseError.value = "ポイント購入処理に失敗しました";
@@ -134,56 +132,62 @@ async function onPaymentModalClosed() {
         </div>
         <div v-else>
           <div v-auto-animate class="grid gap-4 sm:grid-cols-2">
-            <button
+            <Button
               v-for="plan in plans"
               :key="plan.id"
               type="button"
+              variant="secondary"
+              :aria-pressed="selecting === plan.id"
               @click="selectPlan(plan.id)"
               :class="[
-                'group relative rounded-lg border bg-card/70 backdrop-blur-sm p-4 text-left flex flex-col gap-3 shadow-sm ring-1 ring-border/60 hover:shadow-md hover:border-primary/40 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+                'w-full h-auto p-0 text-left group relative flex flex-col rounded-lg overflow-hidden bg-card/70 backdrop-blur-sm transition',
                 selecting === plan.id
-                  ? 'border-primary/50 ring-primary/40'
-                  : '',
+                  ? 'border-primary/60 ring-1 ring-primary/30 shadow-sm'
+                  : 'border-border/70',
+                'hover:shadow-md hover:border-primary/40 focus-visible:ring-primary/40',
               ]"
             >
-              <div class="flex items-start justify-between w-full">
-                <div class="flex flex-col gap-0.5">
-                  <span class="font-semibold tracking-tight text-sm">{{
-                    plan.name
-                  }}</span>
-                  <span class="text-[11px] text-muted-foreground"
-                    >{{ plan.points.toLocaleString() }} pt</span
+              <div class="p-4 flex flex-col gap-3 w-full">
+                <div class="flex items-start justify-between w-full">
+                  <div class="flex flex-col gap-0.5">
+                    <span class="font-semibold tracking-tight text-sm">{{
+                      plan.name
+                    }}</span>
+                    <span class="text-[11px] text-muted-foreground"
+                      >{{ plan.points.toLocaleString() }} pt</span
+                    >
+                  </div>
+                  <span
+                    v-if="plan.price < plan.points"
+                    class="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-medium tracking-wide"
+                    >BONUS</span
                   >
                 </div>
-                <span
+                <div
+                  class="flex items-end justify-between text-sm font-medium tabular-nums"
+                >
+                  <span>￥{{ plan.price.toLocaleString() }}</span>
+                  <span class="text-[11px] text-muted-foreground"
+                    >{{ (plan.price / plan.points).toFixed(2) }} 円 / pt</span
+                  >
+                </div>
+                <div
                   v-if="plan.price < plan.points"
-                  class="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-medium tracking-wide"
-                  >BONUS</span
+                  class="text-[10px] text-emerald-600 dark:text-emerald-400"
                 >
-              </div>
-              <div
-                class="flex items-end justify-between text-sm font-medium tabular-nums"
-              >
-                <span>￥{{ plan.price.toLocaleString() }}</span>
-                <span class="text-[11px] text-muted-foreground"
-                  >{{ (plan.price / plan.points).toFixed(2) }} 円 / pt</span
+                  {{ Math.round((1 - plan.price / plan.points) * 100) }}% OFF
+                  相当
+                </div>
+                <span
+                  v-if="selecting === plan.id"
+                  class="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-primary/20 text-primary font-medium"
+                  >選択中</span
                 >
+                <span
+                  class="absolute inset-px rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-primary/10 to-transparent"
+                />
               </div>
-              <div
-                v-if="plan.price < plan.points"
-                class="text-[10px] text-emerald-600 dark:text-emerald-400"
-              >
-                {{ Math.round((1 - plan.price / plan.points) * 100) }}% OFF 相当
-              </div>
-              <span
-                v-if="selecting === plan.id"
-                class="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-primary/20 text-primary font-medium"
-                >選択中</span
-              >
-              <span
-                class="absolute inset-px rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-primary/10 to-transparent"
-              />
-            </button>
+            </Button>
           </div>
           <p v-if="!plans.length" class="text-sm text-muted-foreground">
             利用可能なプランがありません。
@@ -198,7 +202,7 @@ async function onPaymentModalClosed() {
           >
             選択したプランで進む
           </Button>
-          <Button variant="outline" class="w-full" @click="closeOrBack"
+          <Button variant="secondary" class="w-full" @click="closeOrBack"
             >キャンセル</Button
           >
           <p v-if="purchaseError" class="text-xs text-destructive">

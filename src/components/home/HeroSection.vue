@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
+import { Button } from "@/components/ui/button";
 
 const router = useRouter();
 const { isAuthenticated } = useAuth();
@@ -55,32 +56,34 @@ function goCharge() {
         </p>
         <div class="flex flex-wrap gap-4">
           <template v-if="isAuthenticated">
-            <button
+            <Button
               @click="goSearch"
-              class="inline-flex items-center rounded-md bg-primary px-6 py-3 text-white font-medium shadow hover:opacity-90 transition"
+              class="px-6 py-3 font-medium shadow hover:opacity-90"
             >
               オークションを見る
-            </button>
-            <button
+            </Button>
+            <Button
               @click="goCharge"
-              class="inline-flex items-center rounded-md border border-primary/60 px-6 py-3 font-medium text-primary hover:bg-primary/10 transition"
+              variant="secondary"
+              class="px-6 py-3 font-medium border-primary/60 text-primary hover:opacity-80"
             >
               ポイントをチャージ
-            </button>
+            </Button>
           </template>
           <template v-if="!isAuthenticated">
-            <button
+            <Button
               @click="goSignup"
-              class="inline-flex items-center rounded-md bg-primary px-6 py-3 text-white font-medium shadow hover:opacity-90 transition"
+              class="px-6 py-3 font-medium shadow hover:opacity-90"
             >
               5,000P受け取って始める
-            </button>
-            <button
+            </Button>
+            <Button
               @click="goSearch"
-              class="inline-flex items-center rounded-md border border-primary/60 px-6 py-3 font-medium text-primary hover:bg-primary/10 transition"
+              variant="secondary"
+              class="px-6 py-3 font-medium border-primary/60 text-primary hover:opacity-80"
             >
               オークションを見る
-            </button>
+            </Button>
           </template>
         </div>
         <div class="flex gap-6 pt-4 text-sm">

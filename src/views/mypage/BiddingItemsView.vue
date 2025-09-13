@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { Button } from "@/components/ui/button";
 import { getBiddingItems } from "@/api/me";
 import AuctionItemRealtimeGrid from "@/components/AuctionItemRealtimeGrid.vue";
 import { useRouter } from "vue-router";
@@ -24,12 +25,12 @@ function goBack() {
     <header class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold tracking-tight">入札中一覧</h1>
-        <button
-          class="text-sm text-primary hover:underline underline-offset-2"
+        <Button
+          variant="link"
+          class="text-sm px-0 h-auto font-normal underline-offset-2 hover:underline"
           @click="goBack"
+          >&larr; マイページへ戻る</Button
         >
-          &larr; マイページへ戻る
-        </button>
       </div>
       <p class="text-sm text-muted-foreground">
         リアルタイムで更新されます。ブラウザを閉じると購読は解除されます。
