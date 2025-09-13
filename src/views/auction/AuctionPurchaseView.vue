@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   getPurchaseStatus,
@@ -19,6 +19,10 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import PaymentMethodModal from "@/components/payment/PaymentMethodModal.vue";
+import {
+  prefectures as prefectureData,
+  findPrefecture,
+} from "@/constants/prefectures";
 import type { DepositResponse } from "@/api/points";
 import { Separator } from "@/components/ui/separator";
 
@@ -38,6 +42,9 @@ const error = ref<string | null>(null);
 // form fields
 const prefecture = ref("");
 const city = ref("");
+// バリデーション用エラーメッセージ
+const prefectureError = ref<string | null>(null);
+const cityError = ref<string | null>(null);
 const addressLine1 = ref("");
 const addressLine2 = ref("");
 const deliveryDate = ref("");
@@ -125,8 +132,8 @@ onMounted(async () => {
 });
 
 // 入力が完了していて決済未実施の状態で"購入"ボタン活性
-const canOpenPayment = computed(
-  () =>
+const canOpenPayment = computed(() => {
+  return (
     !purchased.value &&
     prefecture.value &&
     city.value &&
@@ -135,7 +142,40 @@ const canOpenPayment = computed(
     deliveryTimeSlot.value != null &&
     shippingCarrier.value != null &&
     !submitting.value
-);
+  );
+});
+
+// 依存セレクト制御
+const availablePrefectures = computed(() => prefectureData.map((p) => p.name));
+const availableCities = computed(() => {
+  if (!prefecture.value) return [] as string[];
+  return findPrefecture(prefecture.value)?.cities ?? [];
+});
+
+watch(prefecture, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    // 都道府県変更時に市区町村リセット
+    city.value = "";
+    cityError.value = null;
+  }
+  prefectureError.value = null;
+});
+
+watch(city, () => {
+  cityError.value = null;
+});
+
+function validateAddressSection() {
+  if (!prefecture.value) prefectureError.value = "都道府県を選択してください";
+  if (!city.value) cityError.value = "市区町村を選択してください";
+  return !prefectureError.value && !cityError.value;
+}
+
+function openPaymentModal() {
+  if (!validateAddressSection()) return;
+  if (!canOpenPayment.value) return;
+  showPaymentModal.value = true;
+}
 
 async function refreshStatus() {
   try {
@@ -143,11 +183,6 @@ async function refreshStatus() {
   } catch (e: any) {
     // ignore for silent refresh
   }
-}
-
-function openPaymentModal() {
-  if (!canOpenPayment.value) return;
-  showPaymentModal.value = true;
 }
 
 async function onPaymentCompleted(deposit: DepositResponse) {
@@ -249,20 +284,61 @@ async function onPaymentModalClosed() {
           <h2 class="text-base font-semibold">配送先情報</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <label class="block text-xs font-medium mb-1">都道府県</label>
-              <input
-                v-model="prefecture"
-                type="text"
-                class="w-full rounded-md border bg-background px-3 py-2 text-sm"
-              />
+              <label class="block text-xs font-medium mb-1"
+                >都道府県
+                <span class="text-destructive" v-if="prefectureError"
+                  >*</span
+                ></label
+              >
+              <Select v-model="prefecture">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="選択してください" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      v-for="p in availablePrefectures"
+                      :key="p"
+                      :value="p"
+                      >{{ p }}</SelectItem
+                    >
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <p
+                v-if="prefectureError"
+                class="mt-1 text-[11px] text-destructive"
+              >
+                {{ prefectureError }}
+              </p>
             </div>
             <div>
-              <label class="block text-xs font-medium mb-1">市区町村</label>
-              <input
-                v-model="city"
-                type="text"
-                class="w-full rounded-md border bg-background px-3 py-2 text-sm"
-              />
+              <label class="block text-xs font-medium mb-1"
+                >市区町村
+                <span class="text-destructive" v-if="cityError">*</span></label
+              >
+              <Select v-model="city" :disabled="!prefecture">
+                <SelectTrigger class="w-full">
+                  <SelectValue
+                    :placeholder="
+                      prefecture ? '選択してください' : '先に都道府県を選択'
+                    "
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      v-for="c in availableCities"
+                      :key="c"
+                      :value="c"
+                      >{{ c }}</SelectItem
+                    >
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <p v-if="cityError" class="mt-1 text-[11px] text-destructive">
+                {{ cityError }}
+              </p>
             </div>
             <div class="md:col-span-2">
               <label class="block text-xs font-medium mb-1">住所１</label>
