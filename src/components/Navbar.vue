@@ -66,7 +66,7 @@ const routeList: RouteProps[] = [
     auth: "auth",
   },
   {
-    to: "/about",
+    to: "/about/what-is",
     label: "オークションについて",
     auth: "public",
   },

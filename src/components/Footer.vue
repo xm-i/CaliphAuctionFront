@@ -23,21 +23,36 @@ import Separator from "./ui/separator/Separator.vue";
           <h3 class="font-bold text-lg">オークションについて</h3>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100">
+            <RouterLink
+              to="/about/what-is"
+              class="opacity-60 hover:opacity-100"
+            >
               オークションとは
-            </a>
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100"> 会社概要 </a>
+            <RouterLink
+              to="/about/company"
+              class="opacity-60 hover:opacity-100"
+            >
+              会社概要
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100"> 採用情報 </a>
+            <RouterLink
+              to="/about/careers"
+              class="opacity-60 hover:opacity-100"
+            >
+              採用情報
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100"> お知らせ </a>
+            <RouterLink to="/about/news" class="opacity-60 hover:opacity-100">
+              お知らせ
+            </RouterLink>
           </div>
         </div>
 
@@ -45,36 +60,54 @@ import Separator from "./ui/separator/Separator.vue";
           <h3 class="font-bold text-lg">ヘルプ＆ガイド</h3>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100"> 配送について </a>
+            <RouterLink
+              to="/about/shipping"
+              class="opacity-60 hover:opacity-100"
+            >
+              配送について
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100">
+            <RouterLink to="/about/safety" class="opacity-60 hover:opacity-100">
               安心・安全への取り組み
-            </a>
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100"> 動作環境 </a>
+            <RouterLink
+              to="/about/system-requirements"
+              class="opacity-60 hover:opacity-100"
+            >
+              動作環境
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100">
+            <RouterLink
+              to="/about/support"
+              class="opacity-60 hover:opacity-100"
+            >
               お客様サポート
-            </a>
+            </RouterLink>
           </div>
         </div>
         <div class="flex flex-col gap-2">
           <h3 class="font-bold text-lg">ポリシーと利用規約</h3>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100">
+            <RouterLink
+              to="/about/privacy"
+              class="opacity-60 hover:opacity-100"
+            >
               プライバシーポリシー
-            </a>
+            </RouterLink>
           </div>
 
           <div>
-            <a href="#" class="opacity-60 hover:opacity-100"> 利用規約 </a>
+            <RouterLink to="/about/terms" class="opacity-60 hover:opacity-100">
+              利用規約
+            </RouterLink>
           </div>
         </div>
       </div>

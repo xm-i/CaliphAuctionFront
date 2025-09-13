@@ -28,11 +28,86 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "signup-success" */ "../views/signup/SignUpSuccessView.vue"
       ),
   },
+  // About section detail pages
   {
-    path: "/about",
-    name: "about",
+    path: "/about/what-is",
+    name: "about-what",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+      import(
+        /* webpackChunkName: "about-what" */ "../views/about/AuctionAboutView.vue"
+      ),
+  },
+  {
+    path: "/about/company",
+    name: "about-company",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-company" */ "../views/about/CompanyProfileView.vue"
+      ),
+  },
+  {
+    path: "/about/careers",
+    name: "about-careers",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-careers" */ "../views/about/CareersView.vue"
+      ),
+  },
+  {
+    path: "/about/news",
+    name: "about-news",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-news" */ "../views/about/NewsView.vue"
+      ),
+  },
+  {
+    path: "/about/shipping",
+    name: "about-shipping",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-shipping" */ "../views/about/ShippingInfoView.vue"
+      ),
+  },
+  {
+    path: "/about/safety",
+    name: "about-safety",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-safety" */ "../views/about/SafetyInitiativesView.vue"
+      ),
+  },
+  {
+    path: "/about/system-requirements",
+    name: "about-system-requirements",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-system-requirements" */ "../views/about/SystemRequirementsView.vue"
+      ),
+  },
+  {
+    path: "/about/support",
+    name: "about-support",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-support" */ "../views/about/SupportView.vue"
+      ),
+  },
+  {
+    path: "/about/privacy",
+    name: "about-privacy",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-privacy" */ "../views/about/PrivacyPolicyView.vue"
+      ),
+  },
+  {
+    path: "/about/terms",
+    name: "about-terms",
+    component: () =>
+      import(
+        /* webpackChunkName: "about-terms" */ "../views/about/TermsOfServiceView.vue"
+      ),
   },
   {
     path: "/mypage",
