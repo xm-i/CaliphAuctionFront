@@ -10,6 +10,14 @@ import {
 import { getAuctionItem } from "@/api/auction";
 import { useAuth } from "@/composables/useAuth";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from "@/components/ui/select";
 import PaymentMethodModal from "@/components/payment/PaymentMethodModal.vue";
 import type { DepositResponse } from "@/api/points";
 import { Separator } from "@/components/ui/separator";
@@ -289,37 +297,43 @@ async function onPaymentModalClosed() {
             </div>
             <div>
               <label class="block text-xs font-medium mb-1">時間帯コード</label>
-              <select
-                v-model.number="deliveryTimeSlot"
-                class="w-full rounded-md border bg-background px-3 py-2 text-sm"
-              >
-                <option disabled value="">選択してください</option>
-                <option
-                  v-for="opt in timeSlotOptions"
-                  :key="opt.value"
-                  :value="opt.value"
-                >
-                  {{ opt.label }}
-                </option>
-              </select>
+              <Select v-model="deliveryTimeSlot">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="選択してください" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      v-for="opt in timeSlotOptions"
+                      :key="opt.value"
+                      :value="String(opt.value)"
+                    >
+                      {{ opt.label }}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label class="block text-xs font-medium mb-1"
                 >配送業者コード</label
               >
-              <select
-                v-model.number="shippingCarrier"
-                class="w-full rounded-md border bg-background px-3 py-2 text-sm"
-              >
-                <option disabled value="">選択してください</option>
-                <option
-                  v-for="opt in carrierOptions"
-                  :key="opt.value"
-                  :value="opt.value"
-                >
-                  {{ opt.label }}
-                </option>
-              </select>
+              <Select v-model="shippingCarrier">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="選択してください" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      v-for="opt in carrierOptions"
+                      :key="opt.value"
+                      :value="String(opt.value)"
+                    >
+                      {{ opt.label }}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

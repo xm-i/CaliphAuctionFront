@@ -363,7 +363,10 @@ function formatBidTime(d: Date | string) {
               >{{ item.bidHistories.length }} 件</span
             >
           </div>
-          <ul class="space-y-2 overflow-y-auto max-h-80 pr-1 custom-scrollbar">
+          <ul
+            class="space-y-2 overflow-y-auto max-h-80 pr-1 custom-scrollbar"
+            v-auto-animate
+          >
             <li
               v-for="bid in item.bidHistories"
               :key="bid.id"

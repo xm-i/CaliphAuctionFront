@@ -95,8 +95,12 @@ html {
     --muted: 220 16% 92%;
     --muted-foreground: 220 9% 42%;
 
-    --accent: 259 84% 64%;
-    --accent-foreground: 210 40% 98%;
+  /* Accent (was purple). Replaced with desaturated blue-gray for consistency */
+  --accent: 218 24% 88%;
+  --accent-foreground: 222 55% 14%;
+
+  /* Dedicated select highlight (used instead of former purple) */
+  --select-accent: 222 90% 96%;
 
     --destructive: 0 72% 54%;
     --destructive-foreground: 0 0% 98%;
@@ -110,6 +114,7 @@ html {
     --chart-3: 34 94% 57%;
     --chart-4: 281 83% 63%;
     --chart-5: 339 84% 60%;
+  --gradient-accent: 245 70% 60%;
   }
 
   .dark {
@@ -131,8 +136,9 @@ html {
     --muted: 225 28% 20%;
     --muted-foreground: 225 15% 70%;
 
-    --accent: 270 92% 70%;
-    --accent-foreground: 222 50% 10%;
+  --accent: 220 28% 26%;
+  --accent-foreground: 220 20% 92%;
+  --select-accent: 222 60% 20%;
 
     --destructive: 0 65% 46%;
     --destructive-foreground: 0 0% 98%;
@@ -145,6 +151,7 @@ html {
     --chart-3: 34 94% 57%;
     --chart-4: 281 83% 63%;
     --chart-5: 339 84% 60%;
+  --gradient-accent: 245 70% 60%;
   }
 }
 
@@ -188,7 +195,7 @@ html {
 
 @layer utilities {
   .hover-raise { @apply transition-transform duration-200 will-change-transform hover:-translate-y-0.5; }
-  .text-gradient-primary { background: linear-gradient(90deg,hsl(var(--primary)),hsl(var(--accent))); -webkit-background-clip:text; color:transparent; }
+  .text-gradient-primary { background: linear-gradient(90deg,hsl(var(--primary)),hsl(var(--gradient-accent))); background-clip:text; -webkit-background-clip:text; color:transparent; }
   .focus-ring { @apply outline-none ring-2 ring-ring/50 ring-offset-2 ring-offset-background; }
 }
 

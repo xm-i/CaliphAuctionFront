@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from "@/components/ui/select";
 import { createBankTransferDeposit, type DepositResponse } from "@/api/points";
 
 interface Props {
@@ -140,30 +148,41 @@ async function submit() {
     <div class="space-y-4 text-sm">
       <div class="space-y-1">
         <label class="text-xs font-medium">銀行名</label>
-        <select
-          v-model="bankName"
-          class="w-full rounded-md border bg-background/70 backdrop-blur px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option disabled value="">選択してください</option>
-          <option v-for="b in banks" :key="b.name" :value="b.name">
-            {{ b.name }}
-          </option>
-        </select>
+        <Select v-model="bankName">
+          <SelectTrigger class="w-full">
+            <SelectValue placeholder="選択してください" />
+          </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem
+                  v-for="b in banks"
+                  :key="b.name"
+                  :value="b.name"
+                >
+                  {{ b.name }}
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+        </Select>
       </div>
       <div class="space-y-1">
         <label class="text-xs font-medium">支店名</label>
-        <select
-          v-model="branchName"
-          :disabled="!bankName"
-          class="w-full rounded-md border bg-background/70 backdrop-blur px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
-        >
-          <option disabled value="">
-            {{ bankName ? "支店を選択" : "先に銀行を選択" }}
-          </option>
-          <option v-for="br in availableBranches" :key="br" :value="br">
-            {{ br }}
-          </option>
-        </select>
+        <Select v-model="branchName" :disabled="!bankName">
+          <SelectTrigger class="w-full">
+            <SelectValue :placeholder="bankName ? '支店を選択' : '先に銀行を選択'" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem
+                v-for="br in availableBranches"
+                :key="br"
+                :value="br"
+              >
+                {{ br }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
       <div class="space-y-1">
         <label class="text-xs font-medium">口座番号</label>
