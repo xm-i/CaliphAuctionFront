@@ -13,6 +13,7 @@ import {
 } from "@/api/me";
 import type { SearchItemDto } from "@/api/auction";
 import AuctionItemRealtimeGrid from "@/components/AuctionItemRealtimeGrid.vue";
+import WonItemMiniCard from "@/components/WonItemMiniCard.vue";
 import { usePointsBalanceStore } from "@/stores/pointsBalance";
 
 // Stores & Auth
@@ -416,48 +417,7 @@ const formatDateTime = (d: string | Date) => {
           <div
             class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5"
           >
-            <div
-              v-for="w in wonItems"
-              :key="w.id"
-              class="group relative rounded-lg border bg-card/70 backdrop-blur-sm overflow-hidden hover:border-primary/40 transition flex flex-col"
-            >
-              <router-link
-                :to="`/auction/${w.id}`"
-                class="block overflow-hidden"
-              >
-                <img
-                  :src="w.thumbnailImageUrl"
-                  :alt="w.name"
-                  class="w-full aspect-[4/3] object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                  loading="lazy"
-                />
-              </router-link>
-              <div class="p-2 flex flex-col gap-1 flex-1">
-                <h3
-                  class="text-[12px] font-medium leading-tight line-clamp-2 min-h-[2.0rem]"
-                >
-                  <router-link
-                    :to="`/auction/${w.id}`"
-                    class="hover:underline"
-                    >{{ w.name }}</router-link
-                  >
-                </h3>
-                <div
-                  class="mt-auto flex items-center justify-between text-[11px]"
-                >
-                  <span class="font-semibold text-primary tabular-nums"
-                    >¥{{ w.currentPrice.toLocaleString() }}</span
-                  >
-                  <span
-                    class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                    >獲得</span
-                  >
-                </div>
-              </div>
-              <div
-                class="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-primary/10 via-transparent to-fuchsia-400/10"
-              ></div>
-            </div>
+            <WonItemMiniCard v-for="w in wonItems" :key="w.id" :item="w" />
             <div
               v-if="!loadingWon && !wonItems.length && !itemsError"
               class="col-span-full text-sm text-muted-foreground py-4 text-center"

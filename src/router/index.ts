@@ -69,42 +69,6 @@ const routes: Array<RouteRecordRaw> = [
       ),
   },
   {
-    path: "/points/paypal-login",
-    name: "points-paypal-login",
-    meta: { requiresAuth: true, blankLayout: true },
-    component: () =>
-      import(
-        /* webpackChunkName: "points-paypal-login" */ "../views/points/PaypalLoginView.vue"
-      ),
-  },
-  {
-    path: "/points/method",
-    name: "points-method",
-    meta: { requiresAuth: true, blankLayout: true },
-    component: () =>
-      import(
-        /* webpackChunkName: "points-method" */ "../views/points/SelectPaymentMethodView.vue"
-      ),
-  },
-  {
-    path: "/points/credit-card",
-    name: "points-credit-card",
-    meta: { requiresAuth: true, blankLayout: true },
-    component: () =>
-      import(
-        /* webpackChunkName: "points-credit-card" */ "../views/points/CreditCardDepositView.vue"
-      ),
-  },
-  {
-    path: "/points/bank-transfer",
-    name: "points-bank-transfer",
-    meta: { requiresAuth: true, blankLayout: true },
-    component: () =>
-      import(
-        /* webpackChunkName: "points-bank-transfer" */ "../views/points/BankTransferDepositView.vue"
-      ),
-  },
-  {
     path: "/points/complete",
     name: "points-complete",
     meta: { requiresAuth: true, blankLayout: true },
@@ -123,6 +87,26 @@ const routes: Array<RouteRecordRaw> = [
     props: true,
   },
   {
+    path: "/auction/:id/purchase",
+    name: "auction-purchase",
+    meta: { requiresAuth: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "auction-purchase" */ "../views/auction/AuctionPurchaseView.vue"
+      ),
+    props: true,
+  },
+  {
+    path: "/auction/:id/purchase/complete",
+    name: "auction-purchase-complete",
+    meta: { requiresAuth: true },
+    component: () =>
+      import(
+        /* webpackChunkName: "auction-purchase-complete" */ "../views/auction/AuctionPurchaseCompleteView.vue"
+      ),
+    props: true,
+  },
+  {
     path: "/search",
     name: "search",
     component: () =>
@@ -133,6 +117,22 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory("/"),
   routes,
+  scrollBehavior(to, _from, savedPosition) {
+    // ブラウザの戻る/進むでは保存された位置を優先
+    if (savedPosition) {
+      return savedPosition;
+    }
+    // ハッシュがある場合は該当要素へ（存在しなければトップ）
+    if (to.hash) {
+      return {
+        el: to.hash,
+        top: 0,
+        behavior: "smooth",
+      } as any;
+    }
+    // 通常遷移はページトップにリセット
+    return { left: 0, top: 0 };
+  },
 });
 
 router.beforeEach((to) => {

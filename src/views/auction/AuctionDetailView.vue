@@ -164,6 +164,29 @@ function formatBidTime(d: Date | string) {
 
     <template v-else-if="item">
       <div class="flex flex-col gap-4">
+        <div
+          v-if="item.status === AuctionStatus.Ended"
+          class="rounded-lg border border-amber-500/40 bg-amber-100/40 dark:bg-amber-400/10 p-3 flex items-center justify-between gap-4 text-amber-800 dark:text-amber-200 text-sm"
+        >
+          <span>
+            このオークションは終了しました。
+            <template v-if="isSelfHighest"
+              >あなたが最高入札者です。購入手続きに進んでください。</template
+            >
+          </span>
+          <button
+            v-if="isSelfHighest"
+            class="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 soft-transition"
+            @click="
+              $router.push({
+                name: 'auction-purchase',
+                params: { id: item.id },
+              })
+            "
+          >
+            購入手続きへ
+          </button>
+        </div>
         <div class="flex flex-wrap items-center gap-3">
           <h1 class="text-3xl font-bold tracking-tight flex items-center gap-3">
             {{ item.name }}

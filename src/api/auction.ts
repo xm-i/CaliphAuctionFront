@@ -18,6 +18,7 @@ export type SearchItemDto = {
   status: AuctionStatus;
   currentHighestBidUserName: string | null;
   currentHighestBidUserId: number | null;
+  purchased?: boolean;
 };
 
 export type SearchResponse = {

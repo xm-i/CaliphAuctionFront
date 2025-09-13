@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { getWonItems } from "@/api/me";
 import type { SearchItemDto } from "@/api/auction";
-import AuctionItemCard from "@/components/AuctionItemCard.vue";
+import WonItemMiniCard from "@/components/WonItemMiniCard.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -46,6 +46,15 @@ function goBack() {
         過去に落札した商品です。履歴は最新順で表示します。
       </p>
     </header>
+    <div class="flex items-center gap-3 text-[11px] text-muted-foreground">
+      <span class="inline-flex items-center gap-1"
+        ><span
+          class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+          >購入済</span
+        >
+        購入手続き完了</span
+      >
+    </div>
 
     <div v-if="loading" class="text-center text-muted-foreground py-6 text-sm">
       読み込み中...
@@ -57,7 +66,7 @@ function goBack() {
       v-else
       class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6"
     >
-      <AuctionItemCard v-for="it in items" :key="it.id" :item="it" />
+      <WonItemMiniCard v-for="it in items" :key="it.id" :item="it" />
       <div
         v-if="!items.length"
         class="col-span-full text-sm text-muted-foreground text-center py-8"

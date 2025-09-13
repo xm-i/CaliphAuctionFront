@@ -25,6 +25,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.2",
     "@microsoft/signalr": "^8.0.5",
     "@selemondev/vue3-marquee": "^0.0.8",
     "@tanstack/vue-table": "^8.21.3",
@@ -36,6 +37,7 @@
     "embla-carousel": "^8.3.0",
     "embla-carousel-vue": "^8.3.0",
     "lucide-vue-next": "^0.452.0",
+    "motion-v": "^1.7.1",
     "pinia": "^2.3.1",
     "reka-ui": "^2.4.1",
     "tailwind-merge": "^2.6.0",
