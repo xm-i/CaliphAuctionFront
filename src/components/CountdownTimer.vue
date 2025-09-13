@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch, onMounted } from "vue";
+import { useTimeSyncStore } from "@/stores/timeSync";
 
 const props = defineProps<{
   endTime: Date;
@@ -39,8 +40,17 @@ function format(diffMs: number): string {
   return `${hours}:${minutes}:${seconds}`;
 }
 
+const timeSyncStore = useTimeSyncStore();
+
+function currentNow() {
+  if (timeSyncStore && Number.isFinite(timeSyncStore.offsetMs)) {
+    return Date.now() + timeSyncStore.offsetMs;
+  }
+  return Date.now();
+}
+
 function tick(targetMs: number) {
-  const now = Date.now();
+  const now = currentNow();
   const diff = targetMs - now;
   if (!Number.isFinite(diff) || Number.isNaN(diff)) {
     display.value = "-";

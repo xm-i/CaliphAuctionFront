@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { useTimeSyncStore } from "@/stores/timeSync";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -40,6 +41,30 @@ function reviveDates(input: unknown, inContainer = false): unknown {
 api.interceptors.response.use(
   (res) => {
     res.data = reviveDates(res.data, false);
+
+    try {
+      const store = useTimeSyncStore();
+      let used = false;
+      const body = res.data as any;
+      if (body && typeof body === "object" && body.serverTimeUtc) {
+        const parsed = Date.parse(body.serverTimeUtc);
+        if (Number.isFinite(parsed)) {
+          const end = Date.now();
+          const start = (res.config as any).__requestStart as
+            | number
+            | undefined;
+          let rtt = 0;
+          if (typeof start === "number" && end > start) {
+            rtt = end - start;
+          }
+          // serverTimeUtc はサーバー生成時刻（概ねレスポンス生成時）なので RTT/2 補正を加算
+          const adjusted = parsed + rtt / 2;
+          const observedOffset = adjusted - end;
+          store.updateOffset(observedOffset);
+          used = true;
+        }
+      }
+    } catch {}
     return res;
   },
   async (error: AxiosError) => {
@@ -59,5 +84,11 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Attach request start timestamp for RTT estimation
+api.interceptors.request.use((config) => {
+  (config as any).__requestStart = Date.now();
+  return config;
+});
 
 export default api;
