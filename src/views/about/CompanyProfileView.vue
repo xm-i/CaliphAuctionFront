@@ -15,7 +15,7 @@ import AboutSection from "@/components/about/AboutSection.vue";
           <tbody>
             <tr class="border-b">
               <th class="bg-muted/50 p-2 text-left w-40">名称</th>
-              <td class="p-2">Example Auction Technologies</td>
+              <td class="p-2">Caliph Auction Technologies</td>
             </tr>
             <tr class="border-b">
               <th class="bg-muted/50 p-2 text-left">所在地</th>
@@ -40,10 +40,10 @@ import AboutSection from "@/components/about/AboutSection.vue";
       </AboutSection>
       <AboutSection title="ミッション / ビジョン">
         <p>
-          当社はリアルタイム性・透明性・公平性を軸に「参加ハードルの低いデジタル入札体験」を再設計することを目的として設立されました。単に商品を安く買う場ではなく、<span
+          カリフオークションはリアルタイム性・透明性・公平性を軸に「参加ハードルの低いデジタル入札体験」を再設計することを目的として構想された実験的プロジェクトです。単に商品を安く買う場ではなく、<span
             class="font-medium"
             >“戦略と心理が交差するライブエンタメ”</span
-          >としての価値を磨き続けています。高速入札と価格変動をゲーム的要素として楽しみつつも、信頼を損なわない技術スタックと運用体制を両立し、将来的にはリアルタイム取引インフラとしての外部
+          >としての価値を磨き続けています。正確なサーバー同期カウントダウン、遅延計測、入札アクティビティ監視を組み合わせ、公平性を技術で裏付けることを重視しています。高速入札と価格変動をゲーム的要素として楽しみつつも、信頼を損なわない技術スタックと運用体制を両立し、将来的にはリアルタイム取引インフラとしての外部
           API 化を視野に入れています。
         </p>
       </AboutSection>

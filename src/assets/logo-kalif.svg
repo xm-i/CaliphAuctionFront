@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">カリフオークション ロゴ</title>
+  <desc id="desc">Stylized hammer and countdown ring symbolizing a live auction countdown.</desc>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="60%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <circle cx="64" cy="64" r="56" fill="url(#g)" opacity="0.15" />
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#g2)" stroke-width="6" stroke-linecap="round" stroke-dasharray="40 18 12 300" />
+  <g filter="url(#shadow)" transform="translate(64 64) rotate(-18) translate(-32 -32)">
+    <rect x="18" y="18" width="36" height="12" rx="4" fill="#fff" opacity="0.9" />
+    <rect x="40" y="14" width="10" height="20" rx="3" fill="#fff" />
+    <path d="M22 34c8 8 18 13 30 14" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

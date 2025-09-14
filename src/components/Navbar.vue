@@ -22,7 +22,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-import { ChevronsDown, Menu } from "lucide-vue-next";
+import { Menu } from "lucide-vue-next";
+import logoKalif from "@/assets/logo-kalif.svg";
 import GithubIcon from "@/icons/GithubIcon.vue";
 import ToggleTheme from "./ToggleTheme.vue";
 import { useAuth } from "@/composables/useAuth";
@@ -153,13 +154,21 @@ function isActive(path: string) {
       'w-[92%] md:w-[78%] lg:w-[76%] xl:max-w-screen-xl top-4 mx-auto sticky z-40 flex justify-between items-center px-4 py-2 rounded-2xl glass elevation-1 soft-transition': true,
     }"
   >
-    <a href="/" class="font-bold text-lg flex items-center group">
-      <ChevronsDown
-        class="bg-gradient-to-tr from-primary via-accent to-primary rounded-xl w-9 h-9 mr-2 border border-border/40 text-white shadow-inner shadow-primary/30 group-hover:rotate-12 transition-transform duration-300"
+    <a
+      href="/"
+      class="font-bold text-lg flex items-center group"
+      aria-label="カリフオークション ホーム"
+    >
+      <img
+        :src="logoKalif"
+        alt="カリフオークション ロゴ"
+        class="w-9 h-9 mr-2 rounded-xl border border-border/40 shadow-inner shadow-primary/30 bg-gradient-to-tr from-primary via-accent to-primary p-1 object-contain group-hover:rotate-3 transition-transform duration-300"
+        decoding="async"
+        loading="lazy"
       />
       <span
         class="text-gradient-primary tracking-tight group-hover:opacity-90 transition-opacity"
-        >オークション</span
+        >カリフオークション</span
       >
     </a>
     <!-- Mobile -->
@@ -177,10 +186,12 @@ function isActive(path: string) {
             <SheetHeader class="mb-4 ml-4">
               <SheetTitle class="flex items-center">
                 <a href="/" class="flex items-center">
-                  <ChevronsDown
-                    class="bg-gradient-to-tr from-primary/70 via-primary to-primary/70 rounded-lg size-9 mr-2 border text-white"
+                  <img
+                    :src="logoKalif"
+                    alt="カリフオークション ロゴ"
+                    class="size-9 mr-2 rounded-lg border border-border/40 bg-gradient-to-tr from-primary/70 via-primary to-primary/70 p-1 object-contain"
                   />
-                  オークション
+                  カリフオークション
                 </a>
               </SheetTitle>
             </SheetHeader>
@@ -366,7 +377,7 @@ function isActive(path: string) {
       >
         <a
           aria-label="View on GitHub"
-          href="https://github.com/southernwind/PennyAuctionFront"
+          href="https://github.com/southernwind/CaliphAuctionFront"
           target="_blank"
         >
           <GithubIcon class="size-5" />
