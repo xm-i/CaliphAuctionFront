@@ -1,8 +1,18 @@
 import axios, { AxiosError } from "axios";
 import { useTimeSyncStore } from "@/stores/timeSync";
 
+let baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined;
+if (!baseURL) {
+  if (typeof window !== 'undefined') {
+    console.warn('[api] VITE_API_BASE_URL 未設定のため window.origin を使用します');
+    baseURL = window.location.origin;
+  } else {
+    baseURL = 'http://localhost:3000';
+  }
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL,
   withCredentials: true,
 });
 
@@ -44,7 +54,6 @@ api.interceptors.response.use(
 
     try {
       const store = useTimeSyncStore();
-      let used = false;
       const body = res.data as any;
       if (body && typeof body === "object" && body.serverTimeUtc) {
         const parsed = Date.parse(body.serverTimeUtc);
@@ -61,7 +70,6 @@ api.interceptors.response.use(
           const adjusted = parsed + rtt / 2;
           const observedOffset = adjusted - end;
           store.updateOffset(observedOffset);
-          used = true;
         }
       }
     } catch {}
