@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { Menu } from "lucide-vue-next";
-import logoKalif from "@/assets/logo-kalif.svg";
+import logoCaliph from "@/assets/logo-caliph.svg";
 import GithubIcon from "@/icons/GithubIcon.vue";
 import ToggleTheme from "./ToggleTheme.vue";
 import { useAuth } from "@/composables/useAuth";
@@ -161,7 +161,7 @@ function isActive(path: string) {
       aria-label="カリフオークション ホーム"
     >
       <img
-        :src="logoKalif"
+        :src="logoCaliph"
         alt="カリフオークション ロゴ"
         class="w-9 h-9 mr-2 rounded-xl border border-border/40 shadow-inner shadow-primary/30 bg-gradient-to-tr from-primary via-accent to-primary p-1 object-contain group-hover:rotate-3 transition-transform duration-300"
         decoding="async"
@@ -188,7 +188,7 @@ function isActive(path: string) {
               <SheetTitle class="flex items-center">
                 <a href="/" class="flex items-center">
                   <img
-                    :src="logoKalif"
+                    :src="logoCaliph"
                     alt="カリフオークション ロゴ"
                     class="size-9 mr-2 rounded-lg border border-border/40 bg-gradient-to-tr from-primary/70 via-primary to-primary/70 p-1 object-contain"
                   />

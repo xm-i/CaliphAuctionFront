@@ -1,143 +1,168 @@
-# Caliph Auction Frontend
+<div align="center">
+   <img src="docs/images/logo.png" alt="Caliph Auction Logo" width="200" />
+</div>
 
-Vue 3 + TypeScript + Vite によるカリフオークションフロントエンド。
+# Caliph Auction (Frontend)
 
-## 開発手順
+エンタメ性と透明性を併せ持つ「ペニーオークション型 (時間延長 / 最低入札単位制)」リアルタイムオークション SPA フロントエンドです。Vue 3 / TypeScript / Vite を用い、SignalR WebSocket による低レイテンシな価格更新と、ユーザ視点の公平性 (サーバ時刻同期 / 再接続復元) を重視しています。
 
-依存関係インストール:
+## サイト URL
 
-```bash
-npm ci
+本番サイト: **https://www.caliphauction.com/**  
+（デプロイ状況 / メンテナンスにより一時的にアクセスできない場合があります）
+
+## 関連リポジトリ
+
+| 名前                    | リンク                                                      | 役割 / 概要                       |
+| ----------------------- | ----------------------------------------------------------- | --------------------------------- |
+| Frontend (本リポジトリ) | https://github.com/southernwind/CaliphAuctionFront          | SPA / Vue3 / SignalR クライアント |
+| Backend                 | https://github.com/southernwind/CaliphAuctionBackend        | REST API / 入札 BOT / SignalR Hub |
+| Infrastructure          | https://github.com/southernwind/CaliphAuctionInfrastructure | IaC / CI/CD / 環境構築スクリプト  |
+
+※ ライセンスはいずれも「ソース公開 (再頒布不可)」ポリシーに準拠（各 README を参照）。
+
+## 特徴 (Features)
+
+- 🔄 リアルタイム更新: SignalR (WebSocket) により入札/終了イベントを即時反映
+- ⏱ サーバ時刻同期: RTT 補正 + 平滑化 (EMA) によるクライアント側疑似サーバ時刻 (`approxNow`)
+- 🧮 オークションロジック表示: 残り時間 / 延長挙動 / 最高入札者ハイライト
+- 🖼 CDN 統一: 商品画像 URL を `toCdnUrl()` で正規化 (キャッシュ効率 & 混在防止)
+- 🔐 トークン付与: ローカルストレージの JWT を Axios interceptor で自動注入
+- ♻️ 自動再接続: 接続断後の再接続時に可視アイテム ID を再送 (`SetVisibleItems`)
+- ♿ アクセシビリティ配慮: 価格変動のアニメーション / ARIA ライブ領域調整
+- 🎨 UI: Tailwind + shadcn/vue コンポーネント指向設計
+- 🧪 型安全: Zod + vee-validate による入力検証 (フォーム部)
+
+## スクリーンショット
+
+![list](docs/images/home.png)
+
+## アーキテクチャ概要
+
+```
+┌────────────────┐      ┌────────────────────────┐
+│ Vue Router     │────▶ │ ページコンポーネント     │
+└───────┬────────┘      └───────┬────────────────┘
+        │                       │ fetch / mutate
+        │                       ▼
+        │                   Axios API Client
+        │                       │ REST (JSON + serverTimeUtc)
+        ▼                       ▼
+   Pinia Stores  ◀──────────  Time Sync (offset EMA)
+        │                       ▲
+        ▼                       │ events
+   UI Components ◀──── SignalR Hub (BidUpdate / AuctionClosed)
 ```
 
-開発サーバ起動 (ポート 8080 固定):
+### リアルタイム層
+
+- `src/realtime/auctionHub.ts` が単一クライアントインスタンスを提供
+- 接続確立時/再確立時: 可視アイテム集合をサーバへ `SetVisibleItems`
+- イベント: `ReceiveBidUpdate`, `ReceiveAuctionClosed`
+- オークション詳細では個別 `SubscribeItem` / 一覧では `setVisibleItems`
+
+### 時刻同期
+
+- 各レスポンスの `serverTimeUtc` と RTT/2 補正からオフセット計測
+- `timeSync` ストアで指数移動平均 (alpha=0.2) 平滑化
+- 残り時間表示や「終了予定」の信頼性向上
+
+### 画像/CDN
+
+- 商品画像は `toCdnUrl()` で正規化し混在コンテンツ/キャッシュ不一致を抑制
+
+## ディレクトリ構成 (抜粋)
+
+```
+src/
+   api/            # Axios API ラッパ (認証/日付復元/401ハンドリング)
+   realtime/       # SignalR クライアント
+   stores/         # Pinia (auth, timeSync, points 等)
+   components/     # UI / ドメインコンポーネント
+   views/          # ルーティング単位ページ
+   constants/      # 定数 (例: 都道府県)
+   lib/            # 汎用 util (jwt, cdn など)
+public/           # そのまま配信される静的ファイル
+docs/images/      # ← README 用 ※ビルド対象外
+```
+
+## セットアップ
 
 ```bash
+git clone https://github.com/southernwind/CaliphAuctionFront.git
+cd CaliphAuctionFront
+npm ci
+cp .env.development .env.local  # 必要なら上書き
 npm run dev
 ```
 
-型チェック + 本番ビルド:
+デフォルトでポートは Vite 標準 (`5173` など) 。固定したい場合は `--port` オプションや `vite.config.ts` 変更。
 
-```bash
-npm run build
-```
+### スクリプト
 
-本番ビルドをローカル確認:
+| コマンド          | 説明                          |
+| ----------------- | ----------------------------- |
+| `npm run dev`     | 開発サーバ (HMR)              |
+| `npm run build`   | 型チェック + 本番ビルド (ESM) |
+| `npm run preview` | ローカルで dist プレビュー    |
 
-```bash
-npm run preview
-```
+## 環境変数
 
-## 環境変数 / 設定
+| 変数                | 用途           | 備考 |
+| ------------------- | -------------- | ---- |
+| `VITE_API_BASE_URL` | API ベース URL | -    |
 
-`VITE_` プレフィックス付き変数は Vite によってクライアントへ埋め込まれます。`base` は固定で `/` です。
+`.env.development` / `.env.production` を用意しビルドモードで自動読込。追加モード例: `vite build --mode staging` → `.env.staging`。
 
-### API 接続先の切り替え
+## 認証 / セッション
 
-`VITE_API_BASE_URL` を環境ごとに `.env.*` で定義します。
+- ログイン成功時: JWT を `localStorage.auth_token` に格納
+- Axios request interceptor で `Authorization: Bearer <token>` 自動付与
+- 401 発生時: トークン破棄 + `/signin?redirect=元URL` へ誘導
 
-同梱ファイル例:
+## デプロイ
 
-```
-.env.development  -> VITE_API_BASE_URL=https://localhost:5000
-.env.production   -> VITE_API_BASE_URL=https://api.caliphauction.com
-```
+GitHub Actions (`.github/workflows/deploy.yml`) で:
 
-Vite は `npm run dev` (development モード) なら `.env.development`、`npm run build` は `--mode production` がデフォルトで `.env.production` を読み込みます。独自モードを使いたい場合:
+1. `npm ci`
+2. `npm run build`
+3. `rsync` で `dist/` → サーバ ディレクトリ同期 (SPA fallback 設定必要)
 
-## デプロイ (VPS / SCP / rsync)
+必要シークレット: `DEPLOY_SSH_KEY` (パスフレーズ無し推奨)。接続先ホスト/パスはワークフロー内にハードコードされているため変更時は PR で調整。
 
-GitHub Actions を用いてビルド成果物 (`dist/`) を VPS へ `rsync` (SSH) で転送します。
+## ライセンス
 
-### ワークフロー
+このリポジトリは「ソースコード閲覧・学習目的での公開」であり、一般的な OSS ライセンス (MIT / Apache など) ではありません。いわゆる _Source-Available_ ポリシーです。
 
-ファイル: `.github/workflows/deploy.yml`
+### 許可される行為
 
-トリガー:
+- 個人的または社内での学習・参考・評価
+- 自身の環境でのビルド・実行・検証
+- 一部コード断片 (短い抜粋) を引用した技術記事等への掲載 (出典明記が条件)
 
-- `master` ブランチへの push
-- 手動実行 (workflow_dispatch)
+### 禁止される行為 (明示的に許可しない)
 
-主なステップ:
+- 本リポジトリ全体または実質的主要部分の再頒布 (フォークを含む公的再公開)
+- コードの改変版を公衆に提供 / ホスティング / SaaS として提供
+- ライセンス互換を前提とした他 OSS への組み込み
+- 商用目的 (利用・販売・再販) での使用
 
-1. リポジトリ checkout
-2. Node.js 20 セットアップ & npm キャッシュ
-3. `npm ci`
-4. `npm run build`
-5. `rsync` により `dist/` をサーバ指定パスへ同期
+### 追加注意
 
-### 必要な GitHub Secrets
+- 上記に該当しない利用 (教材化 / セミナー利用 / 研究引用 など) を希望する場合は事前に相談してください。
+- いつでもライセンス/公開方針を変更・終了する可能性があります。
+- Issue / PR は受け付けますが、マージ/反映は保証されません。
 
-ハードコードされた接続情報:
+将来的に OSS ライセンスへ移行する場合は明示的に本節を置き換えます。それまでは本記述が優先します。
 
-```
-ユーザ: ubuntu
-ホスト: caliphauction.com
-パス:   /var/www/caliph-auction/front
-ポート: 22
-```
+## クイック参照
 
-必要なシークレットは 1 つのみ:
+| 領域                    | ファイル                                     |
+| ----------------------- | -------------------------------------------- |
+| API クライアント        | `src/api/client.ts`                          |
+| リアルタイム Hub        | `src/realtime/auctionHub.ts`                 |
+| 時刻同期ストア          | `src/stores/timeSync.ts`                     |
+| オークション詳細        | `src/views/auction/AuctionDetailView.vue`    |
+| 商品一覧 (リアルタイム) | `src/components/AuctionItemRealtimeGrid.vue` |
 
-| 名前             | 説明                                                     |
-| ---------------- | -------------------------------------------------------- |
-| `DEPLOY_SSH_KEY` | `ubuntu` ユーザで接続可能な秘密鍵 (パスフレーズ無し推奨) |
-
-公開鍵 (`.pub`) をサーバ側 `~/.ssh/authorized_keys` に配置してください。
-
-### サーバ側の準備例 (Ubuntu/Nginx)
-
-```bash
-sudo mkdir -p /var/www/html/app
-sudo chown deploy:deploy /var/www/html/app
-
-# Nginx サーバブロック例 (/etc/nginx/sites-available/auction.conf)
-server {
-   listen 80;
-   server_name example.com;
-   root /var/www/html/app;  # dist の中身がここに同期される
-   index index.html;
-
-   location / {
-      try_files $uri $uri/ /index.html; # SPA fallback
-   }
-
-   access_log /var/log/nginx/auction.access.log;
-   error_log  /var/log/nginx/auction.error.log;
-}
-```
-
-有効化:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/auction.conf /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-### 手動デプロイ (ローカルから)
-
-サーバに直接アップロードしたい場合:
-
-```bash
-npm run build
-rsync -avz --delete dist/ deploy@example.com:/var/www/html/app/
-```
-
-### トラブルシュート
-
-| 症状                           | 原因                    | 対応                                     |
-| ------------------------------ | ----------------------- | ---------------------------------------- |
-| 403 / 404                      | Nginx root/権限設定ミス | 所有者・パス再確認 (`ls -al`)            |
-| CSS が反映されない             | ブラウザキャッシュ      | ハードリロード / キャッシュ削除          |
-| 直接 URL アクセスで 404        | SPA fallback 未設定     | Nginx の `try_files` 行を追加            |
-| rsync 失敗 (Permission denied) | デプロイユーザ権限不足  | `DEPLOY_PATH` の所有権変更               |
-| ホスト検証失敗                 | known_hosts 未登録      | workflow 内 ssh-keyscan で解決済みか確認 |
-
-## ディレクトリ概要
-
-- `src/` : アプリ本体
-- `src/components/` : Vue コンポーネント
-- `src/stores/` : Pinia ストア
-- `src/router/` : ルーティング
-- `public/` : そのままコピーされる静的ファイル
+-

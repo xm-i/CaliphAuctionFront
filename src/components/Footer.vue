@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Separator from "./ui/separator/Separator.vue";
-import logoKalif from "@/assets/logo-kalif.svg";
+import logoCaliph from "@/assets/logo-caliph.svg";
 </script>
 
 <template>
@@ -16,7 +16,7 @@ import logoKalif from "@/assets/logo-kalif.svg";
             aria-label="カリフオークション ホーム"
           >
             <img
-              :src="logoKalif"
+              :src="logoCaliph"
               alt="カリフオークション ロゴ"
               class="w-9 h-9 mr-2 rounded-xl border border-border/40 shadow-inner shadow-primary/30 bg-gradient-to-tr from-primary via-accent to-primary p-1 object-contain group-hover:rotate-3 transition-transform duration-300"
               decoding="async"
