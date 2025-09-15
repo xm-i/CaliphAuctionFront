@@ -7,18 +7,21 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: HomeView,
+    meta: { title: "ホーム" },
   },
   {
     path: "/signin",
     name: "signin",
     component: () =>
       import(/* webpackChunkName: "signin" */ "../views/signin/SignInView.vue"),
+    meta: { title: "サインイン" },
   },
   {
     path: "/signup",
     name: "signup",
     component: () =>
       import(/* webpackChunkName: "signup" */ "../views/signup/SignUpView.vue"),
+    meta: { title: "会員登録" },
   },
   {
     path: "/signup/success",
@@ -27,6 +30,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "signup-success" */ "../views/signup/SignUpSuccessView.vue"
       ),
+    meta: { title: "登録完了" },
   },
   // About section detail pages
   {
@@ -36,6 +40,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-what" */ "../views/about/AuctionAboutView.vue"
       ),
+    meta: { title: "このサイトについて" },
   },
   {
     path: "/about/company",
@@ -44,6 +49,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-company" */ "../views/about/CompanyProfileView.vue"
       ),
+    meta: { title: "会社概要" },
   },
   {
     path: "/about/careers",
@@ -52,6 +58,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-careers" */ "../views/about/CareersView.vue"
       ),
+    meta: { title: "採用情報" },
   },
   {
     path: "/about/news",
@@ -60,6 +67,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-news" */ "../views/about/NewsView.vue"
       ),
+    meta: { title: "お知らせ" },
   },
   {
     path: "/about/shipping",
@@ -68,6 +76,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-shipping" */ "../views/about/ShippingInfoView.vue"
       ),
+    meta: { title: "配送について" },
   },
   {
     path: "/about/safety",
@@ -76,6 +85,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-safety" */ "../views/about/SafetyInitiativesView.vue"
       ),
+    meta: { title: "安全への取り組み" },
   },
   {
     path: "/about/system-requirements",
@@ -84,6 +94,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-system-requirements" */ "../views/about/SystemRequirementsView.vue"
       ),
+    meta: { title: "動作環境" },
   },
   {
     path: "/about/support",
@@ -92,6 +103,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-support" */ "../views/about/SupportView.vue"
       ),
+    meta: { title: "サポート" },
   },
   {
     path: "/about/privacy",
@@ -100,6 +112,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-privacy" */ "../views/about/PrivacyPolicyView.vue"
       ),
+    meta: { title: "プライバシーポリシー" },
   },
   {
     path: "/about/terms",
@@ -108,18 +121,19 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-terms" */ "../views/about/TermsOfServiceView.vue"
       ),
+    meta: { title: "利用規約" },
   },
   {
     path: "/mypage",
     name: "mypage",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "マイページ" },
     component: () =>
       import(/* webpackChunkName: "mypage" */ "../views/mypage/MyPageView.vue"),
   },
   {
     path: "/mypage/won",
     name: "mypage-won",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "落札履歴" },
     component: () =>
       import(
         /* webpackChunkName: "mypage-won" */ "../views/mypage/WonItemsView.vue"
@@ -128,7 +142,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/mypage/bidding",
     name: "mypage-bidding",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "入札中アイテム" },
     component: () =>
       import(
         /* webpackChunkName: "mypage-bidding" */ "../views/mypage/BiddingItemsView.vue"
@@ -137,7 +151,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/mypage/charge",
     name: "mypage-charge",
-    meta: { requiresAuth: true, blankLayout: true },
+    meta: { requiresAuth: true, blankLayout: true, title: "ポイントチャージ" },
     component: () =>
       import(
         /* webpackChunkName: "points-charge" */ "../views/points/ChargePointsView.vue"
@@ -146,7 +160,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/points/complete",
     name: "points-complete",
-    meta: { requiresAuth: true, blankLayout: true },
+    meta: { requiresAuth: true, blankLayout: true, title: "ポイント購入完了" },
     component: () =>
       import(
         /* webpackChunkName: "points-complete" */ "../views/points/PurchaseCompleteView.vue"
@@ -160,11 +174,12 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "auction-detail" */ "../views/auction/AuctionDetailView.vue"
       ),
     props: true,
+    meta: { title: "オークション詳細" },
   },
   {
     path: "/auction/:id/purchase",
     name: "auction-purchase",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "購入手続き" },
     component: () =>
       import(
         /* webpackChunkName: "auction-purchase" */ "../views/auction/AuctionPurchaseView.vue"
@@ -174,7 +189,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/auction/:id/purchase/complete",
     name: "auction-purchase-complete",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "購入完了" },
     component: () =>
       import(
         /* webpackChunkName: "auction-purchase-complete" */ "../views/auction/AuctionPurchaseCompleteView.vue"
@@ -186,6 +201,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "search",
     component: () =>
       import(/* webpackChunkName: "search" */ "../views/search/SearchView.vue"),
+    meta: { title: "検索" },
   },
 ];
 
@@ -215,6 +231,17 @@ router.beforeEach((to) => {
   updateAuthenticatedStatus();
   if (to.meta?.requiresAuth && !isAuthenticated.value) {
     return { name: "signin", query: { redirect: to.fullPath } };
+  }
+});
+
+// Set document title after navigation
+const BASE_TITLE = "カリフオークション";
+router.afterEach((to) => {
+  const routeTitle = (to.meta && (to.meta as any).title) as string | undefined;
+  if (routeTitle) {
+    document.title = `${routeTitle} | ${BASE_TITLE}`;
+  } else {
+    document.title = BASE_TITLE;
   }
 });
 

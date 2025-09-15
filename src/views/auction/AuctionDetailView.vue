@@ -2,7 +2,7 @@
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/utils";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { toCdnUrl } from "@/lib/cdn"; // Ensures all item images are served from the CDN origin
 import { useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
@@ -15,11 +15,19 @@ import CountdownTimer from "@/components/CountdownTimer.vue";
 import PlaceBidButton from "@/components/PlaceBidButton.vue";
 import { Button } from "@/components/ui/button";
 import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
+import { usePageTitle } from "@/composables/usePageTitle";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
 
 const item = ref<AuctionDetailDto | null>(null);
+// dynamic page title
+const { setTitle } = usePageTitle();
+watch(item, (val) => {
+  if (val) {
+    setTitle(val.name);
+  }
+});
 const errorMessage = ref<string | null>(null);
 const refreshing = ref(false);
 const loading = ref(true);
