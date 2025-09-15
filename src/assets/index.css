@@ -4,6 +4,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Reserve scrollbar space to prevent layout shift (modal / select opens) */
+  scrollbar-gutter: stable; /* stable both-edges; can be used if side padding needed */
 }
 
 /* *=========== Default theme =========== */

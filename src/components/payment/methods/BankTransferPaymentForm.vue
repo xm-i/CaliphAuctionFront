@@ -152,32 +152,26 @@ async function submit() {
           <SelectTrigger class="w-full">
             <SelectValue placeholder="選択してください" />
           </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem
-                  v-for="b in banks"
-                  :key="b.name"
-                  :value="b.name"
-                >
-                  {{ b.name }}
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
+          <SelectContent class="z-[9999]">
+            <SelectGroup>
+              <SelectItem v-for="b in banks" :key="b.name" :value="b.name">
+                {{ b.name }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
         </Select>
       </div>
       <div class="space-y-1">
         <label class="text-xs font-medium">支店名</label>
         <Select v-model="branchName" :disabled="!bankName">
           <SelectTrigger class="w-full">
-            <SelectValue :placeholder="bankName ? '支店を選択' : '先に銀行を選択'" />
+            <SelectValue
+              :placeholder="bankName ? '支店を選択' : '先に銀行を選択'"
+            />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent class="z-[9999]">
             <SelectGroup>
-              <SelectItem
-                v-for="br in availableBranches"
-                :key="br"
-                :value="br"
-              >
+              <SelectItem v-for="br in availableBranches" :key="br" :value="br">
                 {{ br }}
               </SelectItem>
             </SelectGroup>
