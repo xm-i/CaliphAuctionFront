@@ -23,7 +23,7 @@ const props = withDefaults(
   {
     fetchFn: () => searchAuctions(),
     gridClass:
-      "grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6",
+      "grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6",
     emptyMessage: "商品が見つかりませんでした",
   }
 );
