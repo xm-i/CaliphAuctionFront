@@ -126,7 +126,7 @@ const onSubmit = handleSubmit(async (values) => {
           :aria-invalid="!!errors.termsAccepted"
           :aria-describedby="errors.termsAccepted ? 'terms-error' : undefined"
         />
-        <label for="termsAccepted" class="text-sm leading-snug select-none">
+        <label class="text-sm leading-snug select-none">
           <span>
             <RouterLink
               to="/about/terms"
