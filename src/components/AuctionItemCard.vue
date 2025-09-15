@@ -5,6 +5,7 @@ import { numberWithComma } from "@/utils";
 import PlaceBidButton from "@/components/PlaceBidButton.vue";
 import CountdownTimer from "@/components/CountdownTimer.vue";
 import { ref, watch, computed } from "vue";
+import { toCdnUrl } from "@/lib/cdn"; // Normalizes relative item image paths to CDN
 import { useAuth } from "@/composables/useAuth";
 import { AuctionStatus } from "@/api/auction";
 
@@ -68,7 +69,7 @@ watch(
         <div class="relative block">
           <router-link :to="`/auction/${item.id}`" class="block">
             <img
-              :src="item.thumbnailImageUrl"
+              :src="toCdnUrl(item.thumbnailImageUrl)"
               :alt="item.name + ' のサムネイル'"
               class="w-full aspect-square object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               loading="lazy"

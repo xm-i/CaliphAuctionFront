@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { numberWithComma } from "@/utils";
 import { ref, onMounted, onUnmounted, computed } from "vue";
+import { toCdnUrl } from "@/lib/cdn"; // Ensures all item images are served from the CDN origin
 import { useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import {
@@ -222,7 +223,7 @@ function formatBidTime(d: Date | string) {
         >
           <AspectRatio :ratio="1" class="overflow-hidden">
             <img
-              :src="item.imageUrl"
+              :src="toCdnUrl(item.imageUrl)"
               :alt="item.name"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
