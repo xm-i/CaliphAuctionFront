@@ -4,8 +4,8 @@ import logoCaliph from "@/assets/logo-caliph.svg";
 </script>
 
 <template>
-  <footer id="footer" class="container pt-16 pb-6">
-    <div class="p-10 bg-muted/50 dark:bg-card border rounded-2xl">
+  <footer id="footer" class="container pt-16 pb-2">
+    <div class="p-10 pb-4 bg-muted/50 dark:bg-card border rounded-2xl">
       <div
         class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-x-12 gap-y-8"
       >
@@ -123,18 +123,21 @@ import logoCaliph from "@/assets/logo-caliph.svg";
         </div>
       </div>
 
-      <Separator class="my-6" />
-      <section className="">
-        <h3 class="">
-          &copy; 2025 developed by
+      <Separator class="mt-6 mb-2" />
+      <section>
+        <p
+          class="text-[10px] sm:text-[11px] leading-snug tracking-wide flex items-center gap-1"
+        >
+          <span class="opacity-60">&copy; 2025</span>
+          <span class="opacity-60">developed by</span>
           <a
             target="_blank"
             href="https://github.com/southernwind"
-            className="text-primary transition-all border-primary hover:border-b-2"
+            class="text-primary/80 hover:text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 rounded-sm px-0.5 transition"
           >
             nakamori
           </a>
-        </h3>
+        </p>
       </section>
     </div>
   </footer>
