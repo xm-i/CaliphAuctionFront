@@ -69,7 +69,7 @@ const routeList: RouteProps[] = [
   },
   {
     to: "/about/what-is",
-    label: "オークションについて",
+    label: "カリフオークションについて",
     auth: "public",
   },
 ];

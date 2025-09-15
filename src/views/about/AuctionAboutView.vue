@@ -1,21 +1,20 @@
 <script setup lang="ts">
-// オークションとはページ
 import AboutLayout from "@/components/about/AboutLayout.vue";
 import AboutSection from "@/components/about/AboutSection.vue";
 </script>
 
 <template>
   <AboutLayout
-    title="オークションとは"
+    title="カリフオークションとは"
     :enable-toc="true"
-    description="時間延長型差額入札方式（俗にペニーオークション）の基本構造と初参加時に押さえたい要点を整理しています。仕組みの理解は無駄なポイント消費を抑え戦略的参加につながります。"
+    description="時間延長型差額入札方式の基本構造と初参加時に押さえたい要点を整理しています。仕組みの理解は無駄なポイント消費を抑え戦略的参加につながります。"
   >
     <div
       class="bg-card/50 backdrop-blur rounded-xl border p-6 md:p-8 space-y-10"
     >
       <AboutSection title="基本ルール">
         <p class="leading-relaxed text-sm md:text-base mb-3">
-          ペニーオークションは「カウントダウン」「少額加算」「残時間延長」が組み合わさった競争型の購入手段です。1
+          カリフオークションは「カウントダウン」「少額加算」「残時間延長」が組み合わさった競争型の購入手段です。1
           回の入札で (1) 価格が最小増分だけ上昇 (2) 残時間が数秒延長 (3)
           最高入札者が更新され、タイマーが 0
           に達した時点の最高入札者が落札権を得ます。入札に使ったポイントは原則返還されません（特例プロモーションを除く）。
@@ -53,6 +52,22 @@ import AboutSection from "@/components/about/AboutSection.vue";
           不正検知エンジンが入札間隔や協調挙動をスコアリングし、疑わしいパターンは隔離キューで人間審査。AI
           判定のみで即停止は行わず、将来的に落札履歴ハッシュ検証 API /
           署名開示を計画しています。
+        </p>
+      </AboutSection>
+      <AboutSection title="歴史的背景と 2012 年頃のペニーオークション問題">
+        <p class="leading-relaxed text-sm md:text-base mb-3">
+          2012 年前後、日本国内でも
+          <span class="font-medium">「ペニーオークション」</span>
+          と呼ばれる形式が話題になりました。これは 1
+          回の入札ごとに「少額の入札手数料（ポイント等）を消費」「表示価格が最小刻みで上昇」「残り時間が数秒延長」する<strong>時間延長型差額入札モデル</strong>で、<span
+            class="font-medium"
+            >当サービスと全く同じ仕組み・構造</span
+          >です。
+        </p>
+        <p class="leading-relaxed text-sm md:text-base mb-3">
+          当時一部サービスでは、(1) 実質的に落札困難な設定や過度な広告強調、(2)
+          ステルスマーケティング手法による不透明な集客、(3)
+          不正な自動入札（と疑われる挙動）に関する報道などがあり、消費者保護／表示適正の観点から問題が指摘されました。これらは<strong>運営ポリシーと透明性の欠如</strong>に起因するものです。
         </p>
       </AboutSection>
       <AboutSection title="よくある質問 (FAQ)">
