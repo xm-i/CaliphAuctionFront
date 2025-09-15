@@ -55,6 +55,12 @@ const formattedEndTime = computed(() => {
   });
 });
 
+const descriptionDisplay = computed(() => {
+  const raw = item.value?.description ?? "";
+  const text = raw.replace(/\\n/gi, "\n");
+  return text;
+});
+
 const statusBadge = computed(() => {
   if (!item.value) return null;
   switch (item.value.status) {
@@ -220,7 +226,7 @@ function formatBidTime(d: Date | string) {
         <div
           class="text-sm leading-relaxed whitespace-pre-line text-muted-foreground/90"
         >
-          {{ item.description }}
+          {{ descriptionDisplay }}
         </div>
         <Separator class="mt-2" />
       </div>
