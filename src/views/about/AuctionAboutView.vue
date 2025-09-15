@@ -70,6 +70,55 @@ import AboutSection from "@/components/about/AboutSection.vue";
           不正な自動入札（と疑われる挙動）に関する報道などがあり、消費者保護／表示適正の観点から問題が指摘されました。これらは<strong>運営ポリシーと透明性の欠如</strong>に起因するものです。
         </p>
       </AboutSection>
+      <AboutSection title="公開リポジトリ (ソースコード)">
+        <p class="leading-relaxed text-sm md:text-base mb-4">
+          本サイトの関連ソースコードは以下の GitHub リポジトリで公開しています。
+          監査・検証・学習目的で自由に参照してください（ライセンス条件を遵守の上でご利用ください）。
+        </p>
+        <ul class="space-y-3 text-sm md:text-base">
+          <li class="border rounded-md p-3 bg-muted/30 dark:bg-muted/20">
+            <p class="font-semibold mb-1">フロントエンド (SPA / Vue)</p>
+            <a
+              href="https://github.com/southernwind/CaliphAuctionFront"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary underline-offset-2 hover:underline break-all"
+              aria-label="CaliphAuctionFront リポジトリ (新しいタブで開く)"
+              >https://github.com/southernwind/CaliphAuctionFront</a
+            >
+          </li>
+          <li class="border rounded-md p-3 bg-muted/30 dark:bg-muted/20">
+            <p class="font-semibold mb-1">
+              バックエンド (API / SignalR / 入札BOT)
+            </p>
+            <a
+              href="https://github.com/southernwind/CaliphAuctionBackend"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary underline-offset-2 hover:underline break-all"
+              aria-label="CaliphAuctionBackend リポジトリ (新しいタブで開く)"
+              >https://github.com/southernwind/CaliphAuctionBackend</a
+            >
+          </li>
+          <li class="border rounded-md p-3 bg-muted/30 dark:bg-muted/20">
+            <p class="font-semibold mb-1">インフラ (IaC / CI/CD)</p>
+            <a
+              href="https://github.com/southernwind/CaliphAuctionInfrastructure"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary underline-offset-2 hover:underline break-all"
+              aria-label="CaliphAuctionInfrastructure リポジトリ (新しいタブで開く)"
+              >https://github.com/southernwind/CaliphAuctionInfrastructure</a
+            >
+          </li>
+        </ul>
+        <p
+          class="mt-4 text-xs md:text-[11px] text-muted-foreground leading-relaxed"
+        >
+          ※ コミット履歴や Pull Request を通じて開発過程や設計意図を追跡でき、
+          公開ソースの監査は利用者の自己防衛・モデル理解に資する重要な手段です。
+        </p>
+      </AboutSection>
       <AboutSection title="よくある質問 (FAQ)">
         <div class="space-y-3 text-sm">
           <details class="border rounded-md p-3 bg-card/40">

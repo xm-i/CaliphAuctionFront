@@ -132,7 +132,7 @@ import logoKalif from "@/assets/logo-kalif.svg";
             href="https://github.com/southernwind"
             className="text-primary transition-all border-primary hover:border-b-2"
           >
-            akina nakamori
+            nakamori
           </a>
         </h3>
       </section>
