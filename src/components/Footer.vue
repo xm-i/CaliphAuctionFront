@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ChevronsDown } from "lucide-vue-next";
 import Separator from "./ui/separator/Separator.vue";
+import logoKalif from "@/assets/logo-kalif.svg";
 </script>
 
 <template>
@@ -10,24 +10,35 @@ import Separator from "./ui/separator/Separator.vue";
         class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-x-12 gap-y-8"
       >
         <div class="col-span-full xl:col-span-2">
-          <a href="#" class="flex font-bold items-center">
-            <ChevronsDown
-              class="bg-gradient-to-tr from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white"
+          <a
+            href="/"
+            class="flex font-bold items-center group"
+            aria-label="カリフオークション ホーム"
+          >
+            <img
+              :src="logoKalif"
+              alt="カリフオークション ロゴ"
+              class="w-9 h-9 mr-2 rounded-xl border border-border/40 shadow-inner shadow-primary/30 bg-gradient-to-tr from-primary via-accent to-primary p-1 object-contain group-hover:rotate-3 transition-transform duration-300"
+              decoding="async"
+              loading="lazy"
             />
-
-            <h3 class="text-2xl">オークション</h3>
+            <h3
+              class="text-2xl text-gradient-primary tracking-tight group-hover:opacity-90 transition-opacity"
+            >
+              カリフオークション
+            </h3>
           </a>
         </div>
 
         <div class="flex flex-col gap-2">
-          <h3 class="font-bold text-lg">オークションについて</h3>
+          <h3 class="font-bold text-lg">カリフオークションについて</h3>
 
           <div>
             <RouterLink
               to="/about/what-is"
               class="opacity-60 hover:opacity-100"
             >
-              オークションとは
+              カリフオークションとは
             </RouterLink>
           </div>
 

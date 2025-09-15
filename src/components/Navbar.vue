@@ -30,6 +30,7 @@ import { useAuth } from "@/composables/useAuth";
 import { usePointsBalanceStore } from "@/stores/pointsBalance";
 import { getCategories, type CategoryDto } from "@/api/auction";
 import { useRoute } from "vue-router";
+import MascotImage from "@/components/MascotImage.vue";
 
 type NavAuth = "public" | "auth" | "guest";
 interface RouteProps {
@@ -305,11 +306,7 @@ function isActive(path: string) {
                   </router-link>
                 </li>
               </ul>
-              <img
-                src="https://www.radix-vue.com/logo.svg"
-                alt="Preview"
-                class="h-full w-full rounded-xl object-cover ring-1 ring-border/60 shadow-md"
-              />
+              <MascotImage mood="smiling" size="100%" />
             </div>
           </NavigationMenuContent>
         </NavigationMenuItem>

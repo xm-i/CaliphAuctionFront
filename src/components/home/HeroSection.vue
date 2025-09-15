@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { Button } from "@/components/ui/button";
+import MascotImage from "@/components/MascotImage.vue";
 
 const router = useRouter();
 const { isAuthenticated } = useAuth();
@@ -103,16 +104,30 @@ function goCharge() {
       </div>
       <div class="w-full md:w-1/2 relative">
         <div
-          class="aspect-[16/10] rounded-xl border bg-background/40 backdrop-blur shadow-inner flex items-center justify-center overflow-hidden"
+          class="aspect-[16/10] rounded-xl border bg-background/40 backdrop-blur shadow-inner overflow-hidden flex"
         >
           <div
-            class="absolute inset-0 bg-gradient-to-tr from-primary/30 via-transparent to-fuchsia-400/20 animate-pulse"
+            class="absolute inset-0 bg-gradient-to-tr from-primary/25 via-transparent to-fuchsia-400/20 animate-pulse"
           ></div>
-          <div class="relative z-10 text-center px-6">
-            <p class="font-semibold text-lg mb-2">リアルタイム入札</p>
-            <p class="text-sm text-muted-foreground">
-              カウントダウンが伸び続ける攻防。最後の 1 秒を制するのは誰だ？
-            </p>
+          <div class="relative z-10 flex w-full h-full">
+            <div
+              class="flex-1 flex flex-col justify-center items-center px-6 text-center gap-2"
+            >
+              <p class="font-semibold text-lg mb-1">リアルタイム入札</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">
+                カウントダウンが伸び続ける攻防。<br
+                  class="hidden sm:block"
+                />最後の 1 秒を制するのは誰だ？
+              </p>
+            </div>
+            <div class="hidden sm:flex items-end justify-end pr-4 pb-2">
+              <MascotImage
+                random
+                :exclude="['dogeza', 'dogeza2', 'ojigi2', 'ojigi']"
+                :size="180"
+                decorative
+              />
+            </div>
           </div>
         </div>
       </div>
