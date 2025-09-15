@@ -74,10 +74,7 @@ import AboutSection from "@/components/about/AboutSection.vue";
         </p>
       </AboutSection>
       <AboutSection title="第12条（お問い合わせ）">
-        <p>
-          本規約に関するお問い合わせは support@example-auction.jp
-          までお願いします。
-        </p>
+        <p>本規約に関するお問い合わせは GitHubのissue までお願いします。</p>
       </AboutSection>
       <AboutSection title="第13条（本サービスの性質・フィクション性）">
         <p>
