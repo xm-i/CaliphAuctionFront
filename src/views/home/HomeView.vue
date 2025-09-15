@@ -2,6 +2,7 @@
 import AuctionItemRealtimeGrid from "@/components/AuctionItemRealtimeGrid.vue";
 import HeroSection from "@/components/home/HeroSection.vue";
 import ReviewArea from "@/components/ReviewArea.vue";
+import { searchAuctions } from "@/api/auction";
 </script>
 
 <template>
@@ -15,6 +16,7 @@ import ReviewArea from "@/components/ReviewArea.vue";
         開催中のオークション
       </h2>
       <AuctionItemRealtimeGrid
+        :fetch-fn="() => searchAuctions({ limit: 12 })"
         empty-message="現在出品されている商品はありません"
       />
     </section>

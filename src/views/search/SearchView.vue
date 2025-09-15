@@ -24,6 +24,7 @@ async function fetchAll() {
   try {
     const res = await searchAuctions({
       categoryId: categoryId ? Number(categoryId) : undefined,
+      limit: 100,
     } as any);
     lastResponse.value = res;
     total.value = res.items.length;

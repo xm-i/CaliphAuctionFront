@@ -28,6 +28,7 @@ export type SearchResponse = {
 
 export type SearchAuctionParams = {
   categoryId?: number;
+  limit: number;
 };
 
 export async function searchAuctions(
