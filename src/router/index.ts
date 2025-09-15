@@ -7,7 +7,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: HomeView,
-    meta: { title: "ホーム" },
   },
   {
     path: "/signin",
@@ -235,7 +234,7 @@ router.beforeEach((to) => {
 });
 
 // Set document title after navigation
-const BASE_TITLE = "カリフオークション";
+const BASE_TITLE = "カリフオークション | ライブ型ペニーオークション";
 router.afterEach((to) => {
   const routeTitle = (to.meta && (to.meta as any).title) as string | undefined;
   if (routeTitle) {
