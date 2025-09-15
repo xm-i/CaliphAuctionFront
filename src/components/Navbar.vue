@@ -338,11 +338,6 @@ function isActive(path: string) {
       <div class="flex items-center gap-3">
         <template v-if="isAuthenticated">
           <span
-            class="text-xs tracking-wide text-muted-foreground bg-secondary/60 px-2 py-1 rounded-md"
-          >
-            {{ user?.username }}
-          </span>
-          <span
             v-if="pointsStore.balance != null"
             class="text-xs font-semibold tracking-wide bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1"
           >
