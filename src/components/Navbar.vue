@@ -25,13 +25,24 @@ import { Separator } from "@/components/ui/separator";
 import { Menu } from "lucide-vue-next";
 import logoCaliph from "@/assets/logo-caliph.svg";
 import GithubIcon from "@/icons/GithubIcon.vue";
+import LogoutIcon from "@/icons/LogoutIcon.vue";
 import ToggleTheme from "./ToggleTheme.vue";
 import { useAuth } from "@/composables/useAuth";
 import { usePointsBalanceStore } from "@/stores/pointsBalance";
 import { getCategories, type CategoryDto } from "@/api/auction";
 import { useRoute } from "vue-router";
 import MascotImage from "@/components/MascotImage.vue";
-
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTrigger,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 type NavAuth = "public" | "auth" | "guest";
 interface RouteProps {
   to: string;
@@ -102,7 +113,7 @@ const navMenuKey = ref(0);
 
 const mode = useColorMode();
 
-const { isAuthenticated } = useAuth();
+const { isAuthenticated, logout } = useAuth();
 const pointsStore = usePointsBalanceStore();
 
 onMounted(() => {
@@ -258,7 +269,35 @@ function isActive(path: string) {
 
           <SheetFooter class="flex-col sm:flex-col justify-start items-start">
             <Separator class="mb-2" />
-
+            <div v-if="isAuthenticated" class="w-full mb-2">
+              <SheetClose as-child>
+                <AlertDialog>
+                  <AlertDialogTrigger as-child>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      class="w-full justify-center text-sm font-medium"
+                    >
+                      <LogoutIcon class="size-5" />ログアウト
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>ログアウト確認</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        ログアウトしますが、よろしいですか。
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                      <AlertDialogAction @click="logout()"
+                        >ログアウト</AlertDialogAction
+                      >
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </SheetClose>
+            </div>
             <ToggleTheme />
           </SheetFooter>
         </SheetContent>
@@ -359,6 +398,32 @@ function isActive(path: string) {
         </template>
       </div>
       <ToggleTheme />
+
+      <AlertDialog>
+        <AlertDialogTrigger as-child>
+          <Button
+            v-if="isAuthenticated"
+            size="sm"
+            variant="ghost"
+            aria-label="ログアウト"
+            class="ml-3 font-medium text-xs h-8 px-3 soft-transition hover:bg-muted/60 dark:hover:bg-muted/40"
+          >
+            <LogoutIcon class="size-5" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ログアウト確認</AlertDialogTitle>
+            <AlertDialogDescription>
+              ログアウトしますが、よろしいですか。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>キャンセル</AlertDialogCancel>
+            <AlertDialogAction @click="logout()">ログアウト</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Button
         as-child
