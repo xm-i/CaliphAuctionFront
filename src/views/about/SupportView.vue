@@ -4,7 +4,7 @@ import AboutSection from "@/components/about/AboutSection.vue";
 </script>
 <template>
   <AboutLayout
-    title="サポート / お問い合わせ"
+    title="お客様サポート"
     :enable-toc="true"
     description="利用方法・不具合・権利侵害報告・不正疑いなど各種お問い合わせ手段の一覧です。内容により回答優先度が異なる場合があります。"
   >

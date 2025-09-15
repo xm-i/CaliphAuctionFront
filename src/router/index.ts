@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-what" */ "../views/about/AuctionAboutView.vue"
       ),
-    meta: { title: "このサイトについて" },
+    meta: { title: "カリフオークションとは" },
   },
   {
     path: "/about/company",
@@ -84,7 +84,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-safety" */ "../views/about/SafetyInitiativesView.vue"
       ),
-    meta: { title: "安全への取り組み" },
+    meta: { title: "安心・安全への取り組み" },
   },
   {
     path: "/about/system-requirements",
@@ -102,7 +102,7 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "about-support" */ "../views/about/SupportView.vue"
       ),
-    meta: { title: "サポート" },
+    meta: { title: "お客様サポート" },
   },
   {
     path: "/about/privacy",

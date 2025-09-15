@@ -83,5 +83,4 @@ import AboutSection from "@/components/about/AboutSection.vue";
       </AboutSection>
     </div>
   </AboutLayout>
-  <!-- 旧オプション API script を除去 -->
 </template>
