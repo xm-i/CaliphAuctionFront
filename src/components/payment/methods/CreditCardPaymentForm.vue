@@ -60,7 +60,9 @@ async function submit() {
       class="text-[11px] rounded-md border border-blue-300/60 bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-100 px-3 py-2 leading-relaxed flex gap-2"
     >
       <span class="mt-0.5 select-none">💳</span>
-      <span>有効なカード番号は入力できません (バリデーション用)。</span>
+      <span
+        >有効なカード番号は入力できません。存在しないカード番号を入力してください。</span
+      >
     </div>
     <div class="space-y-4 text-sm">
       <div class="space-y-1">

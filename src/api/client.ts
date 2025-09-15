@@ -1,13 +1,16 @@
 import axios, { AxiosError } from "axios";
 import { useTimeSyncStore } from "@/stores/timeSync";
+import { useNotificationStore } from "@/stores/notifications";
 
 let baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined;
 if (!baseURL) {
-  if (typeof window !== 'undefined') {
-    console.warn('[api] VITE_API_BASE_URL 未設定のため window.origin を使用します');
+  if (typeof window !== "undefined") {
+    console.warn(
+      "[api] VITE_API_BASE_URL 未設定のため window.origin を使用します"
+    );
     baseURL = window.location.origin;
   } else {
-    baseURL = 'http://localhost:3000';
+    baseURL = "http://localhost:3000";
   }
 }
 
@@ -89,6 +92,26 @@ api.interceptors.response.use(
         window.location.assign(`/signin?redirect=${redirect}`);
       }
     }
+    // Global error notification (4xx/5xx) except 401 already handled
+    try {
+      const cfg: any = error.config || {};
+      const suppress = cfg.suppressGlobalError === true;
+      if (!suppress && status && status >= 400) {
+        const data: any = error.response?.data;
+        const msg =
+          (data && (data.error || data.message)) ||
+          `エラーが発生しました (HTTP ${status})`;
+        // Avoid flooding identical consecutive messages
+        const store = useNotificationStore();
+        const last = store.items
+          .slice()
+          .reverse()
+          .find((i) => i.type === "error");
+        if (!last || last.message !== msg) {
+          store.push({ type: "error", message: msg, ttl: 8000 });
+        }
+      }
+    } catch {}
     return Promise.reject(error);
   }
 );
