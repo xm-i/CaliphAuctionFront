@@ -102,7 +102,7 @@ async function onClick() {
       残高不足 (必要: 🪙{{ bidPointCost.toLocaleString() }})
     </Button>
     <Button v-else size="lg" :disabled="disabled" @click="onClick">
-      +\{{ bidIncrement }}で入札 <br />(🪙{{
+      +¥{{ bidIncrement.toLocaleString() }}で入札 <br />(🪙{{
         bidPointCost.toLocaleString()
       }}消費)
     </Button>

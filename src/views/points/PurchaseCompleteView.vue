@@ -82,7 +82,7 @@ const backToMypage = () => {
               </div>
               <div class="text-muted-foreground/70">価格</div>
               <div class="font-medium text-right">
-                \{{ plan.price.toLocaleString() }}
+                ¥{{ plan.price.toLocaleString() }}
               </div>
               <template v-if="result">
                 <div class="text-muted-foreground/70">付与ポイント</div>
