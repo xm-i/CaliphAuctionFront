@@ -185,6 +185,29 @@ function isActive(path: string) {
     </a>
     <!-- Mobile -->
     <div class="flex items-center lg:hidden">
+      <div class="flex items-center gap-3">
+        <template v-if="isAuthenticated">
+          <span
+            v-if="pointsStore.balance != null"
+            class="text-xs font-semibold tracking-wide bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1"
+          >
+            <span class="opacity-70 font-normal">🪙</span>
+            {{ pointsStore.balance!.toLocaleString() }}
+            <Button
+              size="xs"
+              variant="ghost"
+              class="ml-1 text-[10px] h-auto px-1 py-0.5 rounded soft-transition disabled:opacity-40"
+              :disabled="pointsStore.loading"
+              @click.stop="pointsStore.updateBalanceFromApi()"
+              title="残高更新"
+            >
+              <span v-if="!pointsStore.loading">⟳</span>
+              <span v-else class="inline-block animate-spin">⟳</span>
+            </Button>
+          </span>
+          <Separator orientation="vertical" class="h-5" />
+        </template>
+      </div>
       <Sheet v-model:open="isOpen">
         <SheetTrigger as-child>
           <Menu @click="isOpen = true" class="cursor-pointer"></Menu>
