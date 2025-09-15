@@ -73,7 +73,7 @@ import AboutSection from "@/components/about/AboutSection.vue";
         </p>
       </AboutSection>
       <AboutSection title="9. 連絡先">
-        <p>privacy@example-auction.jp までご連絡ください。</p>
+        <p>GitHubのissueでご連絡ください。</p>
       </AboutSection>
     </div>
   </AboutLayout>
