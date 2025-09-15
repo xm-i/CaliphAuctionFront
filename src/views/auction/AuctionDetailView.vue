@@ -374,9 +374,6 @@ function formatBidTime(d: Date | string) {
         >
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-base font-semibold">入札履歴</h2>
-            <span class="text-[11px] text-muted-foreground"
-              >{{ item.bidHistories.length }} 件</span
-            >
           </div>
           <ul
             class="space-y-2 overflow-y-auto max-h-80 pr-1 custom-scrollbar"
