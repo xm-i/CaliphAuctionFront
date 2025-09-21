@@ -83,17 +83,11 @@ watch(
             <span class="text-[10px] text-muted-foreground">Loading…</span>
           </div>
         </div>
-        <!-- Top Left ID badge -->
-        <div
-          class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-medium bg-background/70 backdrop-blur border border-border/60 shadow-sm"
-        >
-          #{{ item.id }}
-        </div>
         <!-- Top Right status/labels -->
         <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
           <span
             v-if="isHighest && !isEnded"
-            class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/20 text-primary shadow-sm"
+            class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/60 drop-shadow-sm"
             >最高入札者</span
           >
           <span
@@ -133,7 +127,7 @@ watch(
         </div>
         <div
           v-if="item.currentHighestBidUserName"
-          class="text-[11px] text-muted-foreground/80"
+          class="text-[11px] font-medium text-foreground/90"
         >
           {{ item.currentHighestBidUserName }} さん
         </div>
