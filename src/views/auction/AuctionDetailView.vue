@@ -16,7 +16,7 @@ import PlaceBidButton from "@/components/PlaceBidButton.vue";
 import { Button } from "@/components/ui/button";
 import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
 import { usePageTitle } from "@/composables/usePageTitle";
-import { useSeo } from "@/composables/useHeader";
+import { useHeader } from "@/composables/useHeader";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
@@ -30,7 +30,7 @@ watch(item, (val) => {
   }
 });
 
-useSeo(() => {
+useHeader(() => {
   if (!item.value) return {};
   const desc = (item.value.description || "")
     .replace(/\s+/g, " ")

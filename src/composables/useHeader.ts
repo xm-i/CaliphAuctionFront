@@ -56,10 +56,7 @@ export function applySeo(params: SeoParams) {
   }
 }
 
-/**
- * useSeo - reactive helper. Pass reactive sources, re-applies when change.
- */
-export function useSeo(getter: () => SeoParams) {
+export function useHeader(getter: () => SeoParams) {
   const apply = () => applySeo(getter());
   onMounted(apply);
   watch(getter, apply, { deep: true });
