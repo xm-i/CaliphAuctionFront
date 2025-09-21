@@ -167,6 +167,7 @@ watch(
         :highest-bid-user-id="props.item.currentHighestBidUserId"
         :loading="refreshing"
         :status="props.item.status"
+        @onError="emit('refresh', props.item.id)"
       />
     </CardContent>
     <div

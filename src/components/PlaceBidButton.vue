@@ -21,6 +21,7 @@ const emit = defineEmits<{
   (e: "placed"): void;
   (e: "error", message: string): void;
   (e: "onBeaforeClick"): void;
+  (e: "onError"): void;
 }>();
 
 const placing = ref(false);
@@ -69,6 +70,7 @@ async function onClick() {
   } catch (e: any) {
     const message = "入札に失敗しました";
     emit("error", message);
+    emit("onError");
   } finally {
     placing.value = false;
   }

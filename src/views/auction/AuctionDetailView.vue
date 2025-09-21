@@ -331,6 +331,7 @@ function formatBidTime(d: Date | string) {
                 @placed="refreshDetail"
                 @error="(m:string)=> (errorMessage = m)"
                 @onBeaforeClick="errorMessage = null"
+                @onError="refreshDetail"
               />
               <p v-if="errorMessage" class="text-destructive text-xs">
                 {{ errorMessage }}
