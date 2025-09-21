@@ -16,6 +16,7 @@ import PlaceBidButton from "@/components/PlaceBidButton.vue";
 import { Button } from "@/components/ui/button";
 import { auctionHub, type BidUpdateDto } from "@/realtime/auctionHub";
 import { usePageTitle } from "@/composables/usePageTitle";
+import { useSeo } from "@/composables/useHeader";
 
 const route = useRoute();
 const itemId = Number(route.params.id);
@@ -27,6 +28,23 @@ watch(item, (val) => {
   if (val) {
     setTitle(val.name);
   }
+});
+
+useSeo(() => {
+  if (!item.value) return {};
+  const desc = (item.value.description || "")
+    .replace(/\s+/g, " ")
+    .slice(0, 120)
+    .trim();
+  return {
+    title: item.value.name,
+    description: desc,
+    image:
+      typeof item.value.imageUrl === "string"
+        ? toCdnUrl(item.value.imageUrl)
+        : undefined,
+    url: `${window.location.origin}/auction/${item.value.id}`,
+  };
 });
 const errorMessage = ref<string | null>(null);
 const refreshing = ref(false);
