@@ -128,6 +128,10 @@ async function refreshItem(id: number) {
   if (index < 0) {
     return;
   }
+  const current = items.value[index];
+  if (current?.status === AuctionStatus.Ended) {
+    return;
+  }
   const fresh = await getAuctionItem(id);
   const updated = { ...items.value[index] };
   updated.currentPrice = fresh.currentPrice;
@@ -156,14 +160,6 @@ function attachHubHandlers() {
 
   unbindClosed = auctionHub.onAuctionClosed(
     async (closed: AuctionClosedDto) => {
-      const index = items.value.findIndex((x) => x.id === closed.auctionItemId);
-      if (index < 0) {
-        return;
-      }
-      const current = items.value[index];
-      if (current?.status === AuctionStatus.Ended) {
-        return;
-      }
       await refreshItem(closed.auctionItemId);
     }
   );
