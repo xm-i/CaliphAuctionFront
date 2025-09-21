@@ -17,11 +17,13 @@ import {
 const props = withDefaults(
   defineProps<{
     fetchFn?: () => Promise<SearchResponse>;
+    maxCount?: number | null;
     gridClass?: string;
     emptyMessage?: string | null;
   }>(),
   {
     fetchFn: () => searchAuctions(),
+    maxCount: null,
     gridClass:
       "grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6",
     emptyMessage: "商品が見つかりませんでした",
@@ -32,6 +34,77 @@ const items = ref<SearchItemDto[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const lastUpdated = ref<Date | null>(null);
+
+const removalTimers = new Map<number, number>();
+
+let refilling = false;
+
+function scheduleRemovalIfEnded() {
+  var endedItems = items.value.filter(
+    (x) => x.status == AuctionStatus.Ended && !removalTimers.has(x.id)
+  );
+
+  const handle = window.setTimeout(() => {
+    for (var item of endedItems) {
+      removalTimers.delete(item.id);
+    }
+
+    removeItemAndRefill(endedItems);
+  }, 20_000);
+  for (var item of endedItems) {
+    removalTimers.set(item.id, handle);
+  }
+}
+
+function removeItemAndRefill(endedItems: SearchItemDto[]) {
+  for (const item of endedItems) {
+    const index = items.value.findIndex((x) => x.id === item.id);
+    if (index >= 0) {
+      items.value.splice(index, 1);
+    }
+  }
+  doRefill();
+}
+
+async function doRefill() {
+  if (refilling) {
+    return;
+  }
+  if (props.maxCount !== null && items.value.length >= props.maxCount) {
+    return;
+  }
+  refilling = true;
+  try {
+    const res = await props.fetchFn();
+    const existingIds = new Set(items.value.map((x) => x.id));
+    const capacityLeft =
+      props.maxCount === null ? Infinity : props.maxCount - items.value.length;
+    if (capacityLeft <= 0) {
+      return;
+    }
+    const toAdd: SearchItemDto[] = [];
+    for (const it of res.items) {
+      if (existingIds.has(it.id)) {
+        continue;
+      }
+      toAdd.push(it);
+      if (toAdd.length >= capacityLeft) {
+        break;
+      }
+    }
+    if (toAdd.length > 0) {
+      items.value.push(...toAdd);
+      void auctionHub.setVisibleItems(items.value.map((x) => x.id));
+    }
+  } finally {
+    refilling = false;
+  }
+}
+
+function clearAllRemovalTimers() {
+  removalTimers.forEach((h) => window.clearTimeout(h));
+  removalTimers.clear();
+}
 
 async function load() {
   loading.value = true;
@@ -63,6 +136,8 @@ async function refreshItem(id: number) {
   updated.currentHighestBidUserName = fresh.currentHighestBidUserName;
   updated.status = fresh.status;
   items.value.splice(index, 1, updated);
+
+  scheduleRemovalIfEnded();
 }
 
 function attachHubHandlers() {
@@ -113,6 +188,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   detachHubHandlers();
+  clearAllRemovalTimers();
 });
 
 async function reloadAll() {
@@ -157,7 +233,7 @@ defineExpose({ reload: reloadAll });
     </div>
     <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
     <div v-else>
-      <div :class="props.gridClass">
+      <div :class="props.gridClass" v-auto-animate>
         <AuctionItemCard
           v-for="item in items"
           :key="item.id"

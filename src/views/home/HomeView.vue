@@ -17,6 +17,7 @@ import { searchAuctions } from "@/api/auction";
       </h2>
       <AuctionItemRealtimeGrid
         :fetch-fn="() => searchAuctions({ limit: 12 })"
+        :maxCount="12"
         empty-message="現在出品されている商品はありません"
       />
     </section>

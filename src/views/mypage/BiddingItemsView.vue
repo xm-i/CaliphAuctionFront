@@ -39,6 +39,7 @@ function goBack() {
 
     <AuctionItemRealtimeGrid
       :fetch-fn="fetchAllBidding"
+      :maxCount="6"
       :empty-message="'現在入札中の商品はありません。'"
       :grid-class="'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6'"
     />
