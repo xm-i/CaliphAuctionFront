@@ -13,11 +13,11 @@
 
 ## 関連リポジトリ
 
-| 名前                    | リンク                                                      | 役割 / 概要                       |
-| ----------------------- | ----------------------------------------------------------- | --------------------------------- |
-| Frontend (本リポジトリ) | https://github.com/southernwind/CaliphAuctionFront          | SPA / Vue3 / SignalR クライアント |
-| Backend                 | https://github.com/southernwind/CaliphAuctionBackend        | REST API / 入札 BOT / SignalR Hub |
-| Infrastructure          | https://github.com/southernwind/CaliphAuctionInfrastructure | IaC / CI/CD / 環境構築スクリプト  |
+| 名前                    | リンク                                              | 役割 / 概要                       |
+| ----------------------- | --------------------------------------------------- | --------------------------------- |
+| Frontend (本リポジトリ) | https://github.com/xm-i/CaliphAuctionFront          | SPA / Vue3 / SignalR クライアント |
+| Backend                 | https://github.com/xm-i/CaliphAuctionBackend        | REST API / 入札 BOT / SignalR Hub |
+| Infrastructure          | https://github.com/xm-i/CaliphAuctionInfrastructure | IaC / CI/CD / 環境構築スクリプト  |
 
 ※ ライセンスはいずれも「ソース公開 (再頒布不可)」ポリシーに準拠（各 README を参照）。
 
@@ -89,7 +89,7 @@ docs/images/      # ← README 用 ※ビルド対象外
 ## セットアップ
 
 ```bash
-git clone https://github.com/southernwind/CaliphAuctionFront.git
+git clone https://github.com/xm-i/CaliphAuctionFront.git
 cd CaliphAuctionFront
 npm ci
 cp .env.development .env.local  # 必要なら上書き

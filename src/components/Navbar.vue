@@ -457,7 +457,7 @@ function isActive(path: string) {
       >
         <a
           aria-label="View on GitHub"
-          href="https://github.com/southernwind/CaliphAuctionFront"
+          href="https://github.com/xm-i/CaliphAuctionFront"
           target="_blank"
         >
           <GithubIcon class="size-5" />

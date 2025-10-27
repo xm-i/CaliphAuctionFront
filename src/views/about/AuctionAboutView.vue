@@ -79,12 +79,12 @@ import AboutSection from "@/components/about/AboutSection.vue";
           <li class="border rounded-md p-3 bg-muted/30 dark:bg-muted/20">
             <p class="font-semibold mb-1">フロントエンド (SPA / Vue)</p>
             <a
-              href="https://github.com/southernwind/CaliphAuctionFront"
+              href="https://github.com/xm-i/CaliphAuctionFront"
               target="_blank"
               rel="noopener noreferrer"
               class="text-primary underline-offset-2 hover:underline break-all"
               aria-label="CaliphAuctionFront リポジトリ (新しいタブで開く)"
-              >https://github.com/southernwind/CaliphAuctionFront</a
+              >https://github.com/xm-i/CaliphAuctionFront</a
             >
           </li>
           <li class="border rounded-md p-3 bg-muted/30 dark:bg-muted/20">
@@ -92,23 +92,23 @@ import AboutSection from "@/components/about/AboutSection.vue";
               バックエンド (API / SignalR / 入札BOT)
             </p>
             <a
-              href="https://github.com/southernwind/CaliphAuctionBackend"
+              href="https://github.com/xm-i/CaliphAuctionBackend"
               target="_blank"
               rel="noopener noreferrer"
               class="text-primary underline-offset-2 hover:underline break-all"
               aria-label="CaliphAuctionBackend リポジトリ (新しいタブで開く)"
-              >https://github.com/southernwind/CaliphAuctionBackend</a
+              >https://github.com/xm-i/CaliphAuctionBackend</a
             >
           </li>
           <li class="border rounded-md p-3 bg-muted/30 dark:bg-muted/20">
             <p class="font-semibold mb-1">インフラ (IaC / CI/CD)</p>
             <a
-              href="https://github.com/southernwind/CaliphAuctionInfrastructure"
+              href="https://github.com/xm-i/CaliphAuctionInfrastructure"
               target="_blank"
               rel="noopener noreferrer"
               class="text-primary underline-offset-2 hover:underline break-all"
               aria-label="CaliphAuctionInfrastructure リポジトリ (新しいタブで開く)"
-              >https://github.com/southernwind/CaliphAuctionInfrastructure</a
+              >https://github.com/xm-i/CaliphAuctionInfrastructure</a
             >
           </li>
         </ul>

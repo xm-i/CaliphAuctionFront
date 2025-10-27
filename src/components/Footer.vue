@@ -132,7 +132,7 @@ import logoCaliph from "@/assets/logo-caliph.svg";
           <span class="opacity-60">developed by</span>
           <a
             target="_blank"
-            href="https://github.com/southernwind"
+            href="https://github.com/xm-i"
             class="text-primary/80 hover:text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 rounded-sm px-0.5 transition"
           >
             nakamori
