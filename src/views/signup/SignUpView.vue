@@ -9,8 +9,18 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
 import { register } from "@/api/auth";
 import { RouterLink } from "vue-router";
+import { useAuth } from "@/composables/useAuth";
+import { watchEffect } from "vue";
 
 const router = useRouter();
+const { isAuthenticated, user } = useAuth();
+
+// 仮登録状態でない場合はログインページに遷移
+watchEffect(() => {
+  if (!isAuthenticated.value || (user.value && !user.value.isPreRegistered)) {
+    router.replace("/signin");
+  }
+});
 
 const schema = toTypedSchema(
   z
@@ -22,10 +32,6 @@ const schema = toTypedSchema(
       passwordConfirm: z
         .string()
         .min(8, { message: "8文字以上で入力してください" }),
-      username: z
-        .string()
-        .min(3, { message: "3文字以上で入力してください" })
-        .max(50, { message: "50文字以下で入力してください" }),
       termsAccepted: z
         .boolean()
         .refine((v) => v === true, { message: "利用規約に同意してください" }),
@@ -33,7 +39,7 @@ const schema = toTypedSchema(
     .refine((d) => d.password === d.passwordConfirm, {
       message: "パスワードが一致しません",
       path: ["passwordConfirm"],
-    })
+    }),
 );
 
 const { defineField, handleSubmit, errors, meta, isSubmitting } = useForm({
@@ -42,7 +48,6 @@ const { defineField, handleSubmit, errors, meta, isSubmitting } = useForm({
     email: "",
     password: "",
     passwordConfirm: "",
-    username: "",
     termsAccepted: false,
   },
 });
@@ -50,14 +55,12 @@ const { defineField, handleSubmit, errors, meta, isSubmitting } = useForm({
 const [email, emailProps] = defineField("email");
 const [password, passwordProps] = defineField("password");
 const [passwordConfirm, passwordConfirmProps] = defineField("passwordConfirm");
-const [username, usernameProps] = defineField("username");
 const [termsAccepted, termsAcceptedProps] = defineField("termsAccepted");
 
 const onSubmit = handleSubmit(async (values) => {
   await register({
     email: values.email,
     password: values.password,
-    username: values.username,
   });
   router.replace({ name: "signup-success" });
 });
@@ -102,18 +105,6 @@ const onSubmit = handleSubmit(async (values) => {
         />
         <p v-if="errors.passwordConfirm" class="text-sm text-red-600 mt-1">
           {{ errors.passwordConfirm }}
-        </p>
-      </div>
-      <div>
-        <Label for="username">ユーザー名</Label>
-        <Input
-          id="username"
-          v-model="username"
-          v-bind="usernameProps"
-          placeholder="username"
-        />
-        <p v-if="errors.username" class="text-sm text-red-600 mt-1">
-          {{ errors.username }}
         </p>
       </div>
       <div class="flex items-start gap-2">

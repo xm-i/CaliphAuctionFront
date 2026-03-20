@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from "vue";
 import Input from "@/components/ui/input/Input.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Separator from "@/components/ui/separator/Separator.vue";
@@ -8,18 +9,20 @@ import { useAuth } from "@/composables/useAuth";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
+import PreRegisterModal from "@/components/PreRegisterModal.vue";
 
 const router = useRouter();
 const route = useRoute();
 const { login, loading, error } = useAuth();
+const showPreRegisterModal = ref(false);
 
 const schema = toTypedSchema(
   z.object({
     email: z
       .string()
       .email({ message: "メールアドレスの形式が正しくありません" }),
-    password: z.string().min(6, { message: "6文字以上で入力してください" }),
-  })
+    password: z.string().min(8, { message: "8文字以上で入力してください" }),
+  }),
 );
 
 const { handleSubmit, errors, defineField, meta } = useForm({
@@ -35,6 +38,10 @@ const onSubmit = handleSubmit(async (values) => {
   const redirect = (route.query.redirect as string) || { name: "home" };
   router.replace(redirect);
 });
+
+function onPreRegistered() {
+  router.replace({ name: "home" });
+}
 </script>
 
 <template>
@@ -86,9 +93,12 @@ const onSubmit = handleSubmit(async (values) => {
     <Separator />
     <div class="text-center">アカウントをお持ちでないですか？</div>
     <div class="flex justify-center">
-      <Button>
-        <router-link to="/signup"> 会員登録 </router-link>
-      </Button>
+      <Button @click="showPreRegisterModal = true"> 会員登録 </Button>
     </div>
+    <PreRegisterModal
+      :open="showPreRegisterModal"
+      @update:open="showPreRegisterModal = $event"
+      @registered="onPreRegistered"
+    />
   </div>
 </template>

@@ -69,11 +69,6 @@ const routeList: RouteProps[] = [
     auth: "guest",
   },
   {
-    to: "/signup",
-    label: "会員登録",
-    auth: "guest",
-  },
-  {
     to: "/mypage",
     label: "マイページ",
     auth: "auth",
@@ -113,7 +108,7 @@ const navMenuKey = ref(0);
 
 const mode = useColorMode();
 
-const { isAuthenticated, logout } = useAuth();
+const { isAuthenticated, logout, user } = useAuth();
 const pointsStore = usePointsBalanceStore();
 
 onMounted(() => {
@@ -132,7 +127,7 @@ watch(
       isOpen.value = false;
     }
     navMenuKey.value++;
-  }
+  },
 );
 
 function closeDesktopMenu() {
@@ -187,6 +182,15 @@ function isActive(path: string) {
     <div class="flex items-center lg:hidden">
       <div class="flex items-center gap-3">
         <template v-if="isAuthenticated">
+          <Button
+            v-if="user?.isPreRegistered"
+            as-child
+            size="xs"
+            variant="outline"
+            class="font-medium text-[10px] h-6 px-2"
+          >
+            <router-link to="/signup">本登録</router-link>
+          </Button>
           <span
             v-if="pointsStore.balance != null"
             class="text-xs font-semibold tracking-wide bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1"
@@ -399,6 +403,15 @@ function isActive(path: string) {
     <div class="hidden lg:flex">
       <div class="flex items-center gap-3">
         <template v-if="isAuthenticated">
+          <Button
+            v-if="user?.isPreRegistered"
+            as-child
+            size="sm"
+            variant="outline"
+            class="font-medium text-xs h-8 px-3 soft-transition"
+          >
+            <router-link to="/signup">本登録</router-link>
+          </Button>
           <span
             v-if="pointsStore.balance != null"
             class="text-xs font-semibold tracking-wide bg-primary/10 text-primary px-2 py-1 rounded-md flex items-center gap-1"

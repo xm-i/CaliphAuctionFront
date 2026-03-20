@@ -22,7 +22,7 @@ const isHighest = computed(
   () =>
     !!user?.value &&
     props.item.currentHighestBidUserId &&
-    user.value.id === props.item.currentHighestBidUserId
+    user.value.id === props.item.currentHighestBidUserId,
 );
 
 const isEnded = computed(() => props.item.status === AuctionStatus.Ended);
@@ -38,7 +38,7 @@ watch(
   () => [props.item.endTime],
   () => {
     refreshing.value = false;
-  }
+  },
 );
 
 watch(
@@ -48,7 +48,7 @@ watch(
       priceChange.value = "up";
       window.setTimeout(() => (priceChange.value = null), 2000);
     }
-  }
+  },
 );
 </script>
 
@@ -172,7 +172,12 @@ watch(
     </CardContent>
     <div
       class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
-      :class="(item as any).endTime && new Date(item.endTime).getTime() - Date.now() <= 10_000 ? 'opacity-100 animate-[flash_1s_steps(2)_infinite] bg-red-500/8' : ''"
+      :class="
+        (item as any).endTime &&
+        new Date(item.endTime).getTime() - Date.now() <= 10_000
+          ? 'opacity-100 animate-[flash_1s_steps(2)_infinite] bg-red-500/8'
+          : ''
+      "
     ></div>
     <div
       v-if="isHighest && !isEnded"

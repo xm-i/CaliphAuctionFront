@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { computed, ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { placeBid, AuctionStatus } from "@/api/auction";
 import { usePointsBalanceStore } from "@/stores/pointsBalance";
+import PreRegisterModal from "@/components/PreRegisterModal.vue";
 
 const props = defineProps<{
   auctionItemId: number;
@@ -25,8 +25,7 @@ const emit = defineEmits<{
 }>();
 
 const placing = ref(false);
-const router = useRouter();
-const route = useRoute();
+const showPreRegister = ref(false);
 const pointsBalanceStore = usePointsBalanceStore();
 const { isAuthenticated, user } = useAuth();
 
@@ -41,12 +40,12 @@ const isSelfHighest = computed(
   () =>
     user.value?.id != null &&
     props.highestBidUserId != null &&
-    user.value.id === props.highestBidUserId
+    user.value.id === props.highestBidUserId,
 );
 
 async function onClick() {
   if (!isAuthenticated.value) {
-    router.push({ name: "signin", query: { redirect: route.fullPath } });
+    showPreRegister.value = true;
     return;
   }
   if (
@@ -89,7 +88,7 @@ async function onClick() {
       :disabled="disabled"
       @click="onClick"
     >
-      ログインして入札
+      入札
     </Button>
     <Button v-else-if="isSelfHighest" size="lg" disabled>
       最高入札者です
@@ -116,5 +115,10 @@ async function onClick() {
         bidPointCost.toLocaleString()
       }}
     </p>
+    <PreRegisterModal
+      :open="showPreRegister"
+      @update:open="showPreRegister = $event"
+      @registered="pointsBalanceStore.updateBalanceFromApi()"
+    />
   </div>
 </template>

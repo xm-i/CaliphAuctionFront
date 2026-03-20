@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { Button } from "@/components/ui/button";
 import MascotImage from "@/components/MascotImage.vue";
+import PreRegisterModal from "@/components/PreRegisterModal.vue";
 
 const router = useRouter();
 const { isAuthenticated } = useAuth();
+const showPreRegisterModal = ref(false);
 
 function goSearch() {
   router.push({ name: "search" });
 }
-function goSignup() {
-  router.push({ name: "signup" });
+function openPreRegister() {
+  showPreRegisterModal.value = true;
 }
 function goCharge() {
   if (isAuthenticated.value) {
@@ -73,7 +76,7 @@ function goCharge() {
           </template>
           <template v-if="!isAuthenticated">
             <Button
-              @click="goSignup"
+              @click="openPreRegister"
               class="px-6 py-3 font-medium shadow hover:opacity-90"
             >
               5,000P受け取って始める
@@ -132,6 +135,11 @@ function goCharge() {
         </div>
       </div>
     </div>
+
+    <PreRegisterModal
+      :open="showPreRegisterModal"
+      @update:open="showPreRegisterModal = $event"
+    />
   </section>
 </template>
 

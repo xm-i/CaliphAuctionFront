@@ -347,7 +347,7 @@ function formatBidTime(d: Date | string) {
                 :loading="refreshing"
                 :status="item.status"
                 @placed="refreshDetail"
-                @error="(m:string)=> (errorMessage = m)"
+                @error="(m: string) => (errorMessage = m)"
                 @onBeaforeClick="errorMessage = null"
                 @onError="refreshDetail"
               />
