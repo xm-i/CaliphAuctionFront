@@ -123,7 +123,7 @@ import logoCaliph from "@/assets/logo-caliph.svg";
         </div>
 
         <div class="flex flex-col gap-2">
-          <h3 class="font-bold text-lg">開発元・他製品</h3>
+          <h3 class="font-bold text-lg">開発元</h3>
 
           <div>
             <a
@@ -132,19 +132,7 @@ import logoCaliph from "@/assets/logo-caliph.svg";
               rel="noopener noreferrer"
               class="opacity-60 hover:opacity-100 flex items-center gap-1 group/link"
             >
-              xm-i ポータル
-              <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 text-[10px]">↗</span>
-            </a>
-          </div>
-
-          <div>
-            <a
-              href="https://mediadeck.xm-i.net/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="opacity-60 hover:opacity-100 flex items-center gap-1 group/link"
-            >
-              MediaDeck
+              xmi
               <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 text-[10px]">↗</span>
             </a>
           </div>
