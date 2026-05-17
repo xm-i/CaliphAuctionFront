@@ -291,6 +291,23 @@ function isActive(path: string) {
                   <router-link :to="to">{{ label }}</router-link>
                 </Button>
               </SheetClose>
+              <SheetClose as-child>
+                <Button
+                  as-child
+                  variant="ghost"
+                  class="justify-start text-base"
+                >
+                  <a
+                    href="https://www.xm-i.net/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-1 group/link"
+                  >
+                    他製品（xm-i.net）
+                    <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 text-[10px]">↗</span>
+                  </a>
+                </Button>
+              </SheetClose>
             </div>
           </div>
 
@@ -394,6 +411,26 @@ function isActive(path: string) {
               <router-link :to="to" @click="closeDesktopMenu">{{
                 label
               }}</router-link>
+            </Button>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Button
+              as-child
+              variant="ghost"
+              class="justify-start text-sm font-medium soft-transition relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 overflow-hidden hover:bg-transparent active:bg-transparent focus:bg-transparent text-slate-600 dark:text-foreground/80 hover:text-slate-900 dark:hover:text-foreground after:absolute after:left-2 after:right-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary after:origin-center after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+            >
+              <a
+                href="https://www.xm-i.net/"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click="closeDesktopMenu"
+                class="flex items-center gap-1 group/link"
+              >
+                他製品
+                <span class="inline-block transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 text-[10px]">↗</span>
+              </a>
             </Button>
           </NavigationMenuLink>
         </NavigationMenuItem>
