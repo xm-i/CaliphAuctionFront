@@ -11,7 +11,7 @@ permissions:
 
 env:
   DEPLOY_USER: deploy
-  DEPLOY_HOST: caliphauction.com
+  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
   DEPLOY_PATH: /var/www/caliph-auction/front
   DEPLOY_PORT: 30532
 
