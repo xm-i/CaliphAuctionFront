@@ -2,101 +2,297 @@
    <img src="docs/images/logo.png" alt="Caliph Auction Logo" width="200" />
 </div>
 
-# Caliph Auction (Frontend)
+# Caliph Auction Frontend
 
-エンタメ性と透明性を併せ持つ「ペニーオークション型 (時間延長 / 最低入札単位制)」リアルタイムオークション SPA フロントエンドです。Vue 3 / TypeScript / Vite を用い、SignalR WebSocket による低レイテンシな価格更新と、ユーザ視点の公平性 (サーバ時刻同期 / 再接続復元) を重視しています。
+## 免責事項
 
-## サイト URL
+**本プロジェクトは、過去に詐欺目的で運営されていたペニーオークションサイトの再現です。このコードベース上での実装は研究・教育目的であり、実際の金銭のやり取りは発生しません。本フロントエンドを実際の決済システムと連携させて商用利用することは禁止されています。**
 
-本番サイト: **https://www.caliphauction.com/**  
-（デプロイ状況 / メンテナンスにより一時的にアクセスできない場合があります）
+---
+
+## 概要
+
+Vue 3 + TypeScript + Vite で構築されたシングルページアプリケーション (SPA)。ペニーオークション型のリアルタイムオークション機能を実装します。SignalR (WebSocket) による低遅延な入札更新、サーバ時刻同期メカニズム、自動再接続機能により、分散環境下での高い一貫性を目指しています。
 
 ## 関連リポジトリ
 
-| 名前                    | リンク                                              | 役割 / 概要                       |
-| ----------------------- | --------------------------------------------------- | --------------------------------- |
-| Frontend (本リポジトリ) | https://github.com/xm-i/CaliphAuctionFront          | SPA / Vue3 / SignalR クライアント |
-| Backend                 | https://github.com/xm-i/CaliphAuctionBackend        | REST API / 入札 BOT / SignalR Hub |
-| Infrastructure          | https://github.com/xm-i/CaliphAuctionInfrastructure | IaC / CI/CD / 環境構築スクリプト  |
+| 名前                    | リンク                                                | 役割 / 概要                       |
+| ----------------------- | ----------------------------------------------------- | --------------------------------- |
+| Frontend (本リポジトリ) | <https://github.com/xm-i/CaliphAuctionFront>          | SPA / Vue3 / SignalR クライアント |
+| Backend                 | <https://github.com/xm-i/CaliphAuctionBackend>        | REST API / 入札 BOT / SignalR Hub |
+| Infrastructure          | <https://github.com/xm-i/CaliphAuctionInfrastructure> | IaC / CI/CD / 環境構築スクリプト  |
 
 ※ ライセンスはいずれも「ソース公開 (再頒布不可)」ポリシーに準拠（各 README を参照）。
 
-## 特徴 (Features)
+## 技術要件
 
-- 🔄 リアルタイム更新: SignalR (WebSocket) により入札/終了イベントを即時反映
-- ⏱ サーバ時刻同期: RTT 補正 + 平滑化 (EMA) によるクライアント側疑似サーバ時刻 (`approxNow`)
-- 🧮 オークションロジック表示: 残り時間 / 延長挙動 / 最高入札者ハイライト
-- 🖼 CDN 統一: 商品画像 URL を `toCdnUrl()` で正規化 (キャッシュ効率 & 混在防止)
-- 🔐 トークン付与: ローカルストレージの JWT を Axios interceptor で自動注入
-- ♻️ 自動再接続: 接続断後の再接続時に可視アイテム ID を再送 (`SetVisibleItems`)
-- ♿ アクセシビリティ配慮: 価格変動のアニメーション / ARIA ライブ領域調整
-- 🎨 UI: Tailwind + shadcn/vue コンポーネント指向設計
-- 🧪 型安全: Zod + vee-validate による入力検証 (フォーム部)
+| 環境     | 要件                                              |
+| -------- | ------------------------------------------------- |
+| Node.js  | 18+                                               |
+| npm      | 9+                                                |
+| ブラウザ | WebSocket 対応 (Chrome / Firefox / Safari / Edge) |
+
+## 主要技術スタック
+
+| 用途              | 技術                     |
+| ----------------- | ------------------------ |
+| フレームワーク    | Vue 3 (Composition API)  |
+| 言語              | TypeScript 5+            |
+| ビルドツール      | Vite 5+                  |
+| 状態管理          | Pinia                    |
+| リアルタイム通信  | SignalR/WebSocket        |
+| HTTP クライアント | Axios                    |
+| スタイリング      | Tailwind CSS 4+          |
+| UI コンポーネント | shadcn/vue               |
+| フォーム検証      | Zod + vee-validate       |
+| ルーティング      | Vue Router 4+            |
+| CDN管理           | 独自 `toCdnUrl()` ラッパ |
+
+## 核心機能
+
+### リアルタイム入札更新
+
+SignalR WebSocket クライアント (`src/realtime/auctionHub.ts`) が、サーバのハブイベント `ReceiveBidUpdate` および `ReceiveAuctionClosed` をリアルタイムで受信します。接続確立時・再確立時には、現在表示中のアイテム ID 群を `SetVisibleItems` メッセージで送信し、サーバ側でブロードキャスト対象を最適化します。
+
+### サーバ時刻同期
+
+REST レスポンスヘッダの `serverTimeUtc` とネットワーク RTT/2 補正値を用いて、クライアント側でサーバ時刻の推定オフセットを計算します。`src/stores/timeSync.ts` の Pinia ストアが指数移動平均 (α=0.2) により平滑化し、`approxNow()` メソッドで疑似サーバ時刻を提供します。これにより、分散クライアント間での時刻判定誤差を最小化します。
+
+### 自動再接続と状態復元
+
+WebSocket 接続喪失時、自動再接続メカニズムが起動します。再接続後、前回表示していたアイテム ID 群を改めて `SetVisibleItems` で送信し、サーバ側からの更新配信を再開します。一時的なネットワーク断裂による表示遅延を抑制します。
+
+### JWT トークン管理
+
+ローカルストレージに保持される JWT をすべての HTTP リクエストに自動注入 (Axios interceptor)。401 レスポンス時の自動更新リトライ、トークン失効時のログアウト処理を実装しています。
+
+### 画像 CDN 統一
+
+商品画像 URL は `src/lib/cdn.ts` の `toCdnUrl()` 関数で正規化されます。混在コンテンツ警告排除、キャッシュキー一貫性、CDN 配信元の統一を実現します。
+
+### フォーム入力検証
+
+支払方法選択、住所入力、ポイントチャージなどのフォーム要素は Zod スキーマ定義と vee-validate で型安全に検証されます。
 
 ## スクリーンショット
 
 ![list](docs/images/home.png)
 
-## アーキテクチャ概要
+## アーキテクチャ
+
+### データフロー
 
 ```
-┌────────────────┐      ┌────────────────────────┐
-│ Vue Router     │────▶ │ ページコンポーネント     │
-└───────┬────────┘      └───────┬────────────────┘
-        │                       │ fetch / mutate
-        │                       ▼
-        │                   Axios API Client
-        │                       │ REST (JSON + serverTimeUtc)
-        ▼                       ▼
-   Pinia Stores  ◀──────────  Time Sync (offset EMA)
-        │                       ▲
-        ▼                       │ events
-   UI Components ◀──── SignalR Hub (BidUpdate / AuctionClosed)
+Vue Router (src/router/index.ts)
+    ↓
+ページコンポーネント (src/views/)
+    ↓
+API レイヤー (src/api/)
+    ├─ Axios インスタンス (jwt, 401 ハンドリング)
+    └─ サーバレスポンス (JSON + serverTimeUtc ヘッダ)
+    ↓
+Pinia ストア (src/stores/)
+    ├─ auth.ts           (認証状態、ユーザ情報)
+    ├─ timeSync.ts       (オフセット EMA 平滑化)
+    ├─ pointsBalance.ts  (ポイント残高)
+    ├─ notifications.ts  (トースト通知)
+    └─ pointsPurchase.ts (ポイントチャージ状態)
+    ↓
+UI コンポーネント (src/components/)
+    ├─ ドメイン固有 (AuctionItemCard.vue, PlaceBidButton.vue 等)
+    └─ 汎用 UI (src/components/ui/)
 ```
 
 ### リアルタイム層
 
-- `src/realtime/auctionHub.ts` が単一クライアントインスタンスを提供
-- 接続確立時/再確立時: 可視アイテム集合をサーバへ `SetVisibleItems`
-- イベント: `ReceiveBidUpdate`, `ReceiveAuctionClosed`
-- オークション詳細では個別 `SubscribeItem` / 一覧では `setVisibleItems`
+- **接続管理**: `src/realtime/auctionHub.ts` は HubConnection のシングルトン化により、アプリケーション全体で単一の SignalR 接続を保持
+- **メッセージング**
+  - Outbound: `SetVisibleItems(itemIds: number[])`, `SubscribeItem(itemId: number)`
+  - Inbound: `ReceiveBidUpdate(auction)`, `ReceiveAuctionClosed(auction)`
+- **再接続ロジック**: 接続喪失後 3 秒以内に自動再接続試行、成功時に前回の可視アイテム ID を再送
+- **動的購読**: 詳細ページ遷移時は該当アイテムのみ購読、一覧表示時は viewport 内アイテムを動的管理
 
-### 時刻同期
+### HTTP API インターセプタ
 
-- 各レスポンスの `serverTimeUtc` と RTT/2 補正からオフセット計測
-- `timeSync` ストアで指数移動平均 (alpha=0.2) 平滑化
-- 残り時間表示や「終了予定」の信頼性向上
+`src/api/client.ts` で設定される Axios インターセプタは以下を実装:
 
-### 画像/CDN
+- リクエスト: ローカルストレージの JWT を `Authorization: Bearer <token>` に注入
+- レスポンス: すべてのレスポンスから `serverTimeUtc` を抽出、`timeSync` ストアへ送信
+- エラーハンドリ: 401 は自動更新リトライ、403/5xx は `GlobalErrorToasts` コンポーネントへディスパッチ
 
-- 商品画像は `toCdnUrl()` で正規化し混在コンテンツ/キャッシュ不一致を抑制
-
-## ディレクトリ構成 (抜粋)
+### ファイル構成
 
 ```
 src/
-   api/            # Axios API ラッパ (認証/日付復元/401ハンドリング)
-   realtime/       # SignalR クライアント
-   stores/         # Pinia (auth, timeSync, points 等)
-   components/     # UI / ドメインコンポーネント
-   views/          # ルーティング単位ページ
-   constants/      # 定数 (例: 都道府県)
-   lib/            # 汎用 util (jwt, cdn など)
-public/           # そのまま配信される静的ファイル
-docs/images/      # ← README 用 ※ビルド対象外
+  api/                 # HTTP クライアント層
+    auth.ts            # ログイン/サインアップ API
+    auction.ts         # オークション一覧・詳細 API
+    client.ts          # Axios インスタンス (JWT インジェクション, インターセプタ)
+    me.ts              # ユーザ情報 API
+    points.ts          # ポイント残高取得 API
+    purchases.ts       # 購入履歴 API
+
+  realtime/            # SignalR クライアント
+    auctionHub.ts      # HubConnection シングルトン管理
+
+  stores/              # Pinia ストア
+    auth.ts            # 認証状態 (JWT, currentUser, isLoggedIn)
+    timeSync.ts        # オフセット同期 (approxNow())
+    points*.ts         # ポイント関連状態
+    notifications.ts   # グローバル通知
+
+  views/               # ルーティング対象ページコンポーネント
+    auction/           # オークション詳細・購入フロー
+    home/              # ホーム / オークション一覧
+    signin/signup/     # 認証フロー
+    mypage/            # ユーザダッシュボード
+    points/            # ポイントチャージ
+    about/             # 静的情報ページ
+
+  components/          # Vue コンポーネント
+    ui/                # shadcn/vue プリミティブ (Button, Card, Dialog 等)
+    **/                # 機能別サブコンポーネント
+    AuctionItemCard.vue        # オークション商品カード
+    AuctionItemRealtimeGrid.vue # リアルタイムグリッド
+    PlaceBidButton.vue         # 入札ボタン (状態遷移)
+    CountdownTimer.vue         # 残り時間カウントダウン
+    ConnectionStatusOverlay.vue # 接続状態インジケータ
+
+  composables/         # Vue 3 Composition 再利用ロジック
+    useAuth.ts         # 認証操作 (ログイン, ログアウト)
+    useHeader.ts       # ヘッダ UI 状態
+    usePageTitle.ts    # ページタイトル動的設定
+
+  lib/                 # 汎用ユーティリティ
+    cdn.ts             # toCdnUrl() 関数 (CDN URL 正規化)
+    jwt.ts             # JWT デコード / 有効性確認
+    utils.ts           # 日付フォーマット等
+
+  types/               # TypeScript 型定義
+    auction-item.ts    # オークション商品インタフェース
+
+  constants/           # 定数定義
+    prefectures.ts     # 都道府県リスト
+    mascotImages.ts    # マスコット画像マッピング
+
+  router/
+    index.ts           # Vue Router 設定 (ルート定義)
+
+  assets/
+    index.css          # グローバルスタイル
+
+public/               # そのまま配信される静的ファイル
+docs/images/          # README/ドキュメント用画像
 ```
 
-## セットアップ
+## セットアップ手順
+
+### 1. 依存パッケージのインストール
 
 ```bash
 git clone https://github.com/xm-i/CaliphAuctionFront.git
 cd CaliphAuctionFront
 npm ci
-cp .env.development .env.local  # 必要なら上書き
+```
+
+### 2. 環境変数の設定
+
+開発環境向け `.env.local` を作成してください。テンプレート:
+
+```
+VITE_API_BASE_URL=http://localhost:5000
+VITE_SIGNALR_HUB_URL=http://localhost:5000/auction-hub
+```
+
+### 3. 開発サーバの起動
+
+```bash
 npm run dev
 ```
 
-デフォルトでポートは Vite 標準 (`5173` など) 。固定したい場合は `--port` オプションや `vite.config.ts` 変更。
+デフォルトでは `http://localhost:5173` で起動します。ポート固定が必要な場合は `--port` オプションを使用:
+
+```bash
+npm run dev -- --port 3000
+
+```
+
+### 4. ビルド
+
+本番向けビルド:
+
+```bash
+npm run build
+```
+
+出力ディレクトリ: `dist/`
+
+### 5. プレビュー
+
+ビルド出力をローカルプレビュー:
+
+```bash
+npm run preview
+```
+
+## NPM スクリプト
+
+| コマンド             | 説明                                |
+| -------------------- | ----------------------------------- |
+| `npm run dev`        | 開発サーバ起動 (ホットリロード有効) |
+| `npm run build`      | 本番向けビルド (dist/ 出力)         |
+| `npm run preview`    | ビルド出力のローカルプレビュー      |
+| `npm run type-check` | TypeScript 型チェック               |
+| `npm run lint`       | ESLint + Prettier チェック          |
+
+## 開発ガイドライン
+
+### コンポーネント設計
+
+- Vue 3 Composition API を使用
+- `<script setup>` シンタックスを推奨
+- 小さな再利用可能なコンポーネントに分割
+- shadcn/vue を UI プリミティブとして活用
+
+### 状態管理
+
+- グローバル状態: Pinia ストア (`src/stores/`)
+- ローカル状態: `ref` / `reactive` (Composition API)
+- フォーム状態: vee-validate + Zod スキーマ
+
+### 非同期データ処理
+
+- HTTP リクエスト: `src/api/` 経由の Axios
+- レスポンスヘッダからの `serverTimeUtc` 抽出は自動 (インターセプタ)
+- リアルタイムイベント: `src/realtime/auctionHub.ts` 経由
+
+### 時刻操作
+
+- 絶対的な現在時刻が必要な場合: `timeSync` ストアの `approxNow()` を使用
+- クライアント時刻は使用しない (サーバ時刻と乖離の可能性)
+
+### TypeScript 型安全性
+
+- フォーム入力: Zod スキーマで定義し vee-validate で検証
+- API レスポンス: インタフェース定義 (`src/types/`) で型付け
+- コンポーネント Props: `withDefaults(defineProps<T>())` で明示
+
+## 関連リポジトリの確認
+
+本フロントエンドは以下と密に連携しています:
+
+- **Backend**: REST API エンドポイント定義、SignalR Hub メッセージ仕様の確認
+- **Infrastructure**: デプロイ環境設定、環境変数、CDN URL スキーム
+
+各リポジトリの README を必ず確認してください。
+
+## 問題報告・機能リクエスト
+
+本リポジトリは教育・研究目的のため、セキュリティまたは重大バグ報告以外のイシューは受け付けていません。
+
+## ライセンス
+
+ソース公開 (再頒布不可) ポリシーに準拠。詳細は各リポジトリの LICENSE を参照してください。
 
 ### スクリプト
 
